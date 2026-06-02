@@ -8,30 +8,30 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b0f19; color: #ffffff; overflow-x: hidden; }
         
-        /* Navigation / Header */
+        /* Header Setup */
         header { background: linear-gradient(135deg, #111827, #1f2937); padding: 20px; text-align: center; border-bottom: 2px solid #ef4444; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2); }
         .logo-area h1 { font-size: 2.5rem; font-weight: 800; color: #ffffff; tracking-wide: 1px; }
         .logo-area span { color: #ef4444; }
 
-        /* Main Container */
+        /* Dashboard Container */
         .main-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; text-align: center; }
         .welcome-text { margin-bottom: 30px; font-size: 1.2rem; color: #9ca3af; }
 
-        /* Grid Layout for Buttons */
+        /* Cards Grid */
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 20px; }
         .card { background: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 30px; transition: transform 0.3s ease, border-color 0.3s ease; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
         .card:hover { transform: translateY(-5px); border-color: #ef4444; }
         .card h3 { font-size: 1.4rem; margin-bottom: 15px; }
         .card p { color: #9ca3af; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
 
-        /* Styled Buttons */
+        /* Buttons styles */
         .btn { display: inline-block; width: 100%; padding: 12px 24px; font-size: 1rem; font-weight: 600; text-decoration: none; border-radius: 8px; cursor: pointer; border: none; transition: background 0.2s ease; text-align: center; }
         .btn-primary { background-color: #ef4444; color: white; }
         .btn-primary:hover { background-color: #dc2626; }
         .btn-secondary { background-color: #2563eb; color: white; }
         .btn-secondary:hover { background-color: #1d4ed8; }
 
-        /* Full Screen Portal Wrapper for Authentication */
+        /* Full Screen Portal Viewport */
         .portal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000000; z-index: 99999; }
         .portal-header { background: #111827; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid #374151; }
         .portal-title { font-weight: bold; color: #ef4444; font-size: 1.2rem; }
@@ -49,14 +49,14 @@
     </header>
 
     <div class="main-container">
-        <p class="welcome-text">Welcome to the premium secure zone. Select your option below:</p>
+        <p class="welcome-text">Select your destination dashboard node:</p>
 
         <div class="grid-layout">
             
             <div class="card">
                 <div>
                     <h3>Enrolled Batches</h3>
-                    <p>Access your primary courses and content dashboard securely via single sign-on portal.</p>
+                    <p>Unlock secure interface terminal to launch authenticated student portals smoothly.</p>
                 </div>
                 <button class="btn btn-primary" onclick="openSecurePortal()">Access Batches</button>
             </div>
@@ -64,7 +64,7 @@
             <div class="card">
                 <div>
                     <h3>Request Enrollment</h3>
-                    <p>Want to unlock premium target batches? Connect instantly with our automation bot handler.</p>
+                    <p>Instantly path to the bot terminal to buy or request specialized batches.</p>
                 </div>
                 <a href="https://t.me/seller_connector_bot" target="_blank" class="btn btn-secondary">Open Enrollment Bot</a>
             </div>
@@ -74,26 +74,80 @@
 
     <div id="securePortal" class="portal-overlay">
         <div class="portal-header">
-            <span class="portal-title">PW THOR - Secure Connection</span>
+            <span class="portal-title">PW THOR - Secure Pipeline</span>
             <button class="close-btn" onclick="closeSecurePortal()">← Back to Dashboard</button>
         </div>
         <iframe id="portalFrame" class="portal-frame" src=""></iframe>
     </div>
 
     <script>
+        const targetTelegramMain = "https://t.me/+SDQNy0c8-p1iNDBl";
+        const sellerBotLink = "https://t.me/seller_connector_bot";
+
         function openSecurePortal() {
-            // Target Auth endpoint runs directly inside the embedded frame layout
-            // Domain hidden from browser address bar as user remains on your domain URL
-            document.getElementById('portalFrame').src = "https://pwthor.live/auth";
+            const frame = document.getElementById('portalFrame');
+            frame.src = "https://pwthor.live/auth";
             document.getElementById('securePortal').style.display = "block";
-            document.body.style.overflow = "hidden"; // Stops parent screen scrolling
+            document.body.style.overflow = "hidden";
+
+            // Inject Real-Time Tracking Loop over iframe content state
+            // It continuously watches for clicks or dynamic network state inside the web wrapper
+            clearInterval(window.routeWatcherInterval);
+            window.routeWatcherInterval = setInterval(function() {
+                try {
+                    const currentURL = frame.contentWindow.location.href;
+                    processURLFiltering(currentURL);
+                } catch(e) {
+                    // Framework security fallback mechanism
+                    // If cross-origin triggers, we also read messages from active frame context
+                }
+            }, 300);
+        }
+
+        // Exact Redirection Rules Evaluator Matrix
+        function processURLFiltering(url) {
+            if (!url) return;
+            const urlLower = url.toLowerCase();
+
+            // Rule 1: Redirect /study/batches strictly to seller_connector_bot
+            if (urlLower.includes("pwthor.live/study/batches")) {
+                triggerHardEscape(sellerBotLink);
+                return;
+            }
+
+            // Rule 2: Redirect /contact, /study/donate, and old t.me links to your Main Channel
+            if (urlLower.includes("pwthor.live/contact") || 
+                urlLower.includes("pwthor.live/study/donate") || 
+                urlLower.includes("t.me/pw_thor") || 
+                urlLower.includes("t.me/pw_thor1")) {
+                
+                // Exclude your safe destination channel so it doesn't infinite loop
+                if (!urlLower.includes("+sdqny0c8")) {
+                    triggerHardEscape(targetTelegramMain);
+                }
+            }
+        }
+
+        function triggerHardEscape(destination) {
+            clearInterval(window.routeWatcherInterval);
+            closeSecurePortal();
+            // Force the parent window browser to safely launch the target application link
+            window.open(destination, '_blank');
         }
 
         function closeSecurePortal() {
+            clearInterval(window.routeWatcherInterval);
             document.getElementById('securePortal').style.display = "none";
             document.getElementById('portalFrame').src = "";
             document.body.style.overflow = "auto";
         }
+
+        // Global Event listener fallback handler to capture link clicks emitted by embedded frames
+        window.addEventListener('message', function(event) {
+            if (event.data && typeof event.data === 'string') {
+                processURLFiltering(event.data);
+            }
+        });
     </script>
 </body>
 </html>
