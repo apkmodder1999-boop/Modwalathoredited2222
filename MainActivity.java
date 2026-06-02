@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                // 2. STRICT URL BLOCKING: Only blocks the exact paths specified
+                // 2. STRICT URL BLOCKING: Only redirects if the path is exactly matched
                 if (urlLower.equals("https://pwthor.live/study/batches") || 
                     urlLower.equals("https://pwthor.live/study/batches/") ||
                     urlLower.equals("https://pwthor.live/contact") || 
@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
                 "const targetTg = '" + targetTelegram + "';" +
                 "const matches = ['/study/batches', '/contact', '/study/donate'];" +
                 
-                // Route interceptor
+                // Route interceptor for internal SPA page shifts
                 "function interceptRouter() { " +
                 "   const path = window.location.pathname.toLowerCase();" +
                 "   if (matches.some(p => path === p || path === p + '/')) { " +
@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
                 "window.addEventListener('popstate', interceptRouter);" +
                 "window.addEventListener('hashchange', interceptRouter);" +
 
-                // UI Cleaner
+                // UI Cleaner (Only swaps Telegram channels, popup blocking removed completely)
                 "function sweepUI() { " +
                 "   interceptRouter();" +
                 "   document.querySelectorAll('a[href]').forEach(link => { " +
@@ -100,17 +100,6 @@ public class MainActivity extends Activity {
                 "       if (href && (href.includes('t.me/pw_thor') || href.includes('pw_thor1'))) { " +
                 "           if (!href.includes('+SDQNy0c8')) { link.setAttribute('href', targetTg); }" +
                 "       }" +
-                "   });" +
-                
-                // SAFE POPUP REMOVAL: Uses display='none' styling to ensure React framework does not crash
-                "   ['[class*=\"popup\"]', '[class*=\"modal\"]', '[id*=\"popup\"]', '[id*=\"modal\"]', 'div[style*=\"position: fixed\"][style*=\"z-index\"]'].forEach(sel => { " +
-                "       try { " +
-                "           document.querySelectorAll(sel).forEach(el => { " +
-                "               if (el && el.tagName !== 'BODY' && el.tagName !== 'HTML' && el.style.display !== 'none') { " +
-                "                   el.style.display = 'none'; " + // Hides the layout smoothly
-                "               }" +
-                "           });" +
-                "       } catch(e) {}" +
                 "   });" +
                 "}" +
                 
@@ -130,4 +119,4 @@ public class MainActivity extends Activity {
             super.onBackPressed();
         }
     }
-}
+                        }
