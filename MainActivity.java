@@ -4,27 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
-    private final ArrayList<byte[]> memoryStabilizerBuffer = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Allocate asset block patterns to satisfy the target compilation footprint requirement
-        initializeHighFidelityFootprint();
-
         webView = new WebView(this);
         setContentView(webView);
 
@@ -37,21 +30,34 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString().toLowerCase();
+                String url = request.getUrl().toString();
+                String urlLower = url.toLowerCase();
                 
-                // Route dynamic downloads and external targets cleanly outside the wrapper shell
-                if (url.contains("download.pwthor.live") || url.equals(targetTelegram)) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getUrl().toString()));
-                    startActivity(intent);
-                    return true;
+                // 1. FORCE EXTERNAL OPEN: download.pwthor.live and your custom Telegram invite link
+                if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        return true;
+                    } catch (Exception e) {
+                        // Fallback if target app is missing
+                        return false; 
+                    }
                 }
 
-                // Hard intercept specified system paths and point them directly to Telegram
-                if (url.contains("/study/batches") || url.contains("/contact") || 
-                    url.contains("/study/donate") || url.contains("/batches") || 
-                    url.contains("t.me/pw_thor") || url.contains("pw_thor1")) {
+                // 2. STRICT URL BLOCKING: Only blocks the exact paths specified
+                if (urlLower.equals("https://pwthor.live/study/batches") || 
+                    urlLower.equals("https://pwthor.live/study/batches/") ||
+                    urlLower.equals("https://pwthor.live/contact") || 
+                    urlLower.equals("https://pwthor.live/contact/") ||
+                    urlLower.equals("https://pwthor.live/study/donate") || 
+                    urlLower.equals("https://pwthor.live/study/donate/") ||
+                    urlLower.contains("t.me/pw_thor") || 
+                    urlLower.contains("t.me/pw_thor1")) {
                     
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     return true;
                 }
@@ -71,11 +77,11 @@ public class MainActivity extends Activity {
     private void executeInjectedSanitizer(WebView view) {
         String js = "javascript:(function() { " +
                 "const targetTg = '" + targetTelegram + "';" +
-                "const matches = ['/study/batches', '/contact', '/study/donate', '/batches'];" +
                 
+                // Strict equality check for current browser location path
                 "function interceptRouter() { " +
                 "   const path = window.location.pathname.toLowerCase();" +
-                "   if (matches.some(p => path.includes(p))) { " +
+                "   if (path === '/study/batches' || path === '/study/batches/' || path === '/contact' || path === '/contact/' || path === '/study/donate' || path === '/study/donate/') { " +
                 "       window.location.href = targetTg;" +
                 "   }" +
                 "}" +
@@ -111,17 +117,6 @@ public class MainActivity extends Activity {
         view.evaluateJavascript(js, null);
     }
 
-    private void initializeHighFidelityFootprint() {
-        // Multi-thread padding layer generation loop to increase the binary footprint above 10MB
-        for (int i = 0; i < 350; i++) {
-            byte[] paddingBlock = new byte[32768];
-            for (int j = 0; j < paddingBlock.length; j++) {
-                paddingBlock[j] = (byte) (j % 128);
-            }
-            memoryStabilizerBuffer.add(paddingBlock);
-        }
-    }
-
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
@@ -130,4 +125,4 @@ public class MainActivity extends Activity {
             super.onBackPressed();
         }
     }
-                        }
+                                       }
