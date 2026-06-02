@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
                 String url = request.getUrl().toString();
                 String urlLower = url.toLowerCase();
                 
-                // 1. FORCE EXTERNAL OPEN: download.pwthor.live and your custom Telegram invite link
+                // 1. FORCE EXTERNAL OPEN: download.pwthor.live and custom Telegram invite link
                 if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -41,7 +41,6 @@ public class MainActivity extends Activity {
                         startActivity(intent);
                         return true;
                     } catch (Exception e) {
-                        // Fallback if target app is missing
                         return false; 
                     }
                 }
@@ -77,11 +76,12 @@ public class MainActivity extends Activity {
     private void executeInjectedSanitizer(WebView view) {
         String js = "javascript:(function() { " +
                 "const targetTg = '" + targetTelegram + "';" +
+                "const matches = ['/study/batches', '/contact', '/study/donate'];" +
                 
-                // Strict equality check for current browser location path
+                // Route interceptor
                 "function interceptRouter() { " +
                 "   const path = window.location.pathname.toLowerCase();" +
-                "   if (path === '/study/batches' || path === '/study/batches/' || path === '/contact' || path === '/contact/' || path === '/study/donate' || path === '/study/donate/') { " +
+                "   if (matches.some(p => path === p || path === p + '/')) { " +
                 "       window.location.href = targetTg;" +
                 "   }" +
                 "}" +
@@ -92,6 +92,7 @@ public class MainActivity extends Activity {
                 "window.addEventListener('popstate', interceptRouter);" +
                 "window.addEventListener('hashchange', interceptRouter);" +
 
+                // UI Cleaner
                 "function sweepUI() { " +
                 "   interceptRouter();" +
                 "   document.querySelectorAll('a[href]').forEach(link => { " +
@@ -100,10 +101,14 @@ public class MainActivity extends Activity {
                 "           if (!href.includes('+SDQNy0c8')) { link.setAttribute('href', targetTg); }" +
                 "       }" +
                 "   });" +
+                
+                // SAFE POPUP REMOVAL: Uses display='none' styling to ensure React framework does not crash
                 "   ['[class*=\"popup\"]', '[class*=\"modal\"]', '[id*=\"popup\"]', '[id*=\"modal\"]', 'div[style*=\"position: fixed\"][style*=\"z-index\"]'].forEach(sel => { " +
                 "       try { " +
                 "           document.querySelectorAll(sel).forEach(el => { " +
-                "               if (el && el.tagName !== 'BODY' && el.tagName !== 'HTML') { el.remove(); }" +
+                "               if (el && el.tagName !== 'BODY' && el.tagName !== 'HTML' && el.style.display !== 'none') { " +
+                "                   el.style.display = 'none'; " + // Hides the layout smoothly
+                "               }" +
                 "           });" +
                 "       } catch(e) {}" +
                 "   });" +
@@ -125,4 +130,4 @@ public class MainActivity extends Activity {
             super.onBackPressed();
         }
     }
-                                       }
+}
