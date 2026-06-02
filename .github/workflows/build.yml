@@ -21,16 +21,26 @@ jobs:
 
     - name: Scaffold Full Android Project Architecture
       run: |
-        # 1. Force establish standard Android structures
         mkdir -p app/src/main/res/layout
+        mkdir -p app/src/main/res/mipmap-mdpi
+        mkdir -p app/src/main/res/mipmap-hdpi
+        mkdir -p app/src/main/res/mipmap-xhdpi
+        mkdir -p app/src/main/res/mipmap-xxhdpi
         mkdir -p app/src/main/java/com/example/webwrapper
         
-        # 2. Safely relocate structural assets
+        # Move source components safely into target paths
         [ -f AndroidManifest.xml ] && cp AndroidManifest.xml app/src/main/AndroidManifest.xml || true
         [ -f activity_main.xml ] && cp activity_main.xml app/src/main/res/layout/activity_main.xml || true
         [ -f MainActivity.java ] && cp MainActivity.java app/src/main/java/com/example/webwrapper/MainActivity.java || true
 
-        # 3. Inject critical project-level gradle configuration
+        # Decode base64 vector asset streams back to app icons
+        if [ -f logo_encoded.txt ]; then
+          cat logo_encoded.txt | tr -d '\n\r ' | base64 -d > app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp app/src/main/res/mipmap-mdpi/ic_launcher.png app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp app/src/main/res/mipmap-mdpi/ic_launcher.png app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp app/src/main/res/mipmap-mdpi/ic_launcher.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+        fi
+
         echo "include ':app'" > settings.gradle
         
         echo "buildscript {
@@ -41,7 +51,6 @@ jobs:
             repositories { google(); mavenCentral() }
         }" > build.gradle
 
-        # 4. Inject application-level dependencies and SDK configuration
         echo "plugins {
             id 'com.android.application'
         }
@@ -55,14 +64,8 @@ jobs:
                 versionCode 1
                 versionName '1.0'
             }
-            buildTypes {
-                release {
-                    minifyEnabled false
-                }
-            }
         }" > app/build.gradle
 
-        # 5. Generate pristine local settings configurations
         echo "sdk.dir=/usr/local/lib/android/sdk" > local.properties
 
     - name: Setup Gradle System
