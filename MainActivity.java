@@ -1,7 +1,9 @@
-package com.example.webwrapper;
+package com.example.webwrapper; // NOTE: Agar aapki purani repo me pehli line alag thi (jaise com.pwthor.app), toh wahan apna purana package naam hi rehne dena!
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebResourceRequest;
@@ -13,6 +15,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
+    private long installTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +23,15 @@ public class MainActivity extends Activity {
         
         webView = new WebView(this);
         setContentView(webView);
+
+        // SharedPreferences (Local Storage) Timer Setup
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        if (!prefs.contains("InstallTime")) {
+            installTime = System.currentTimeMillis();
+            prefs.edit().putLong("InstallTime", installTime).apply();
+        } else {
+            installTime = prefs.getLong("InstallTime", System.currentTimeMillis());
+        }
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -34,7 +46,7 @@ public class MainActivity extends Activity {
                 String url = request.getUrl().toString();
                 String urlLower = url.toLowerCase();
                 
-                // 1. Force external open for download links
+                // 1. Force external browser/app open for download and target telegram links
                 if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -46,12 +58,14 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                // 2. Pure URL Link Click Blocking (No dynamic JS router logic)
-                if (urlLower.contains("/study/batches") || 
-                    urlLower.contains("/contact") || 
-                    urlLower.contains("/study/donate") || 
-                    urlLower.contains("t.me/pw_thor") || 
-                    urlLower.contains("t.me/pw_thor1")) {
+                // 2 Minutes calculation checker (120,000 ms)
+                long currentTime = System.currentTimeMillis();
+                boolean isTimeUp = (currentTime - installTime) > 120000;
+
+                // 2. Strict redirection block rules
+                if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pw_thor1") ||
+                    urlLower.contains("/contact") || urlLower.contains("/study/donate") ||
+                    (isTimeUp && urlLower.contains("/study/batches"))) {
                     
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
@@ -74,7 +88,8 @@ public class MainActivity extends Activity {
         if (webView != null && webView.canGoBack()) {
             webView.goBack();
         } else {
-            super.onBackPressed();
+            // Old stable legacy exit strategy to pass compilation without error
+            moveTaskToBack(true);
         }
     }
-}
+            }
