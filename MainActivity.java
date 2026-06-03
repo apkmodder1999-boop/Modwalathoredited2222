@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void BundlesavedInstanceState) {
         super.onCreate(savedInstanceState);
         
         webView = new WebView(this);
@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -45,20 +46,21 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                // 2. STRICT URL BLOCKING: Only redirects if the path is exactly matched
-                if (urlLower.equals("https://pwthor.live/study/batches") || 
-                    urlLower.equals("https://pwthor.live/study/batches/") ||
-                    urlLower.equals("https://pwthor.live/contact") || 
-                    urlLower.equals("https://pwthor.live/contact/") ||
-                    urlLower.equals("https://pwthor.live/study/donate") || 
-                    urlLower.equals("https://pwthor.live/study/donate/") ||
+                // 2. STRICT URL BLOCKING: Redirects if specific paths are targeted
+                if (urlLower.contains("/study/batches") || 
+                    urlLower.contains("/contact") || 
+                    urlLower.contains("/study/donate") || 
                     urlLower.contains("t.me/pw_thor") || 
                     urlLower.contains("t.me/pw_thor1")) {
                     
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    return true;
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
                 }
                 return false;
             }
@@ -66,7 +68,10 @@ public class MainActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                executeInjectedSanitizer(view);
+                // Sirf tabhi JS run karega jab asli home url khul chuka hoga, loop nahi banega
+                if (!url.equals(targetTelegram)) {
+                    executeInjectedSanitizer(view);
+                }
             }
         });
 
@@ -78,10 +83,10 @@ public class MainActivity extends Activity {
                 "const targetTg = '" + targetTelegram + "';" +
                 "const matches = ['/study/batches', '/contact', '/study/donate'];" +
                 
-                // Route interceptor for internal SPA page shifts
                 "function interceptRouter() { " +
                 "   const path = window.location.pathname.toLowerCase();" +
-                "   if (matches.some(p => path === p || path === p + '/')) { " +
+                "   // Ekdum safe verification taaki home path '/' ya '/study' block na ho\n" +
+                "   if (path !== '/' && path !== '/study' && matches.some(p => path === p || path === p + '/')) { " +
                 "       window.location.href = targetTg;" +
                 "   }" +
                 "}" +
@@ -92,7 +97,6 @@ public class MainActivity extends Activity {
                 "window.addEventListener('popstate', interceptRouter);" +
                 "window.addEventListener('hashchange', interceptRouter);" +
 
-                // UI Cleaner (Only swaps Telegram channels, popup blocking removed completely)
                 "function sweepUI() { " +
                 "   interceptRouter();" +
                 "   document.querySelectorAll('a[href]').forEach(link => { " +
@@ -113,10 +117,10 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
+        if (webView != null && webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
         }
     }
-                    }
+}
