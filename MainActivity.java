@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,16 +46,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // New Android Back Button Handler Architecture
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (myWebView != null && myWebView.canGoBack()) {
+                    myWebView.goBack();
+                } else {
+                    setEnabled(false);
+                    MainActivity.this.getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
+
         String homeUrl = "https://www.notjitu.in/study-v2/batches/subject?batchid=6a0ae06d427dcbb4d1b4e73f&name=Victory%20Reloaded%202027%20(Class%2010th%20ICSE)";
         myWebView.loadUrl(homeUrl);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (myWebView != null && myWebView.canGoBack()) {
-            myWebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
     }
 }
