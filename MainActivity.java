@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
+    private final String homeUrl = "https://pwthor.live/study/batches/6a0ae06d427dcbb4d1b4e73f";
     private long installTime = 0;
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -61,12 +62,13 @@ public class MainActivity extends Activity {
                         checkAndRedirect(currentUrl);
                     }
                 }
-                urlCheckHandler.postDelayed(this, 500); // Check again in half a second
+                urlCheckHandler.postDelayed(this, 500);
             }
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 500);
 
-        webView.loadUrl("https://pwthor.live/study");
+        // Loading your exact target batch URL as the Home node
+        webView.loadUrl(homeUrl);
     }
 
     // Common function to execute strict redirection blocking
@@ -97,7 +99,7 @@ public class MainActivity extends Activity {
             try {
                 // Clear webview to stop loading the blocked page
                 webView.stopLoading();
-                webView.loadUrl("https://pwthor.live/study"); // Move user back to safe zone
+                webView.loadUrl("https://pwthor.live/study"); // Move user back to safe study page after 2 min
                 
                 // Force bounce to your Telegram channel
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
@@ -113,7 +115,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        // Stop the background loop when app is closed to save battery
         if (urlCheckHandler != null && urlCheckRunnable != null) {
             urlCheckHandler.removeCallbacks(urlCheckRunnable);
         }
@@ -128,4 +129,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-            }
+}
