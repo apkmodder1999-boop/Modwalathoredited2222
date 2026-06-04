@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
+    // EXACT HOME URL NODE
     private final String homeUrl = "https://pwthor.live/study/batches/6a0ae06d427dcbb4d1b4e73f";
     private long installTime = 0;
     private Handler urlCheckHandler = new Handler();
@@ -28,7 +29,7 @@ public class MainActivity extends Activity {
         webView = new WebView(this);
         setContentView(webView);
 
-        // Timer Logic: App installation time tracker
+        // Timer Logic: App installation / first open time tracker
         SharedPreferences prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         if (!prefs.contains("InstallTime")) {
             installTime = System.currentTimeMillis();
@@ -52,7 +53,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // LIVE REAL-TIME URL MONITORING LOOP (Har 500ms me internal URL check karega)
+        // LIVE REAL-TIME URL MONITORING LOOP (Har 500ms me check karega)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -67,7 +68,7 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 500);
 
-        // Loading your exact target batch URL as the Home node
+        // Loading your exact requested specific batch page on app open
         webView.loadUrl(homeUrl);
     }
 
@@ -97,11 +98,11 @@ public class MainActivity extends Activity {
             (isTimeUp && urlLower.contains("/study/batches"))) {
             
             try {
-                // Clear webview to stop loading the blocked page
+                // Clear webview to halt loading the restricted content
                 webView.stopLoading();
-                webView.loadUrl("https://pwthor.live/study"); // Move user back to safe study page after 2 min
+                webView.loadUrl("https://pwthor.live/study"); // Fallback safety URL inside app
                 
-                // Force bounce to your Telegram channel
+                // Force push the user to your telegram invite link
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -129,4 +130,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-}
+                    }
