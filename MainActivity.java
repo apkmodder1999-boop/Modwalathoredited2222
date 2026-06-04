@@ -1,9 +1,7 @@
 package com.example.webwrapper; // NOTE: Agar aapki repo me package name alag hai, toh pehli line vahi rehne dena.
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,9 +14,8 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
-    // EXACT HOME URL SET HERE
+    // PERMANENT HOME URL
     private final String homeUrl = "https://pwthor.live/study/batches/6a0ae06d427dcbb4d1b4e73f";
-    private long installTime = 0;
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
 
@@ -28,15 +25,6 @@ public class MainActivity extends Activity {
         
         webView = new WebView(this);
         setContentView(webView);
-
-        // Timer Logic for installation tracking
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-        if (!prefs.contains("InstallTime")) {
-            installTime = System.currentTimeMillis();
-            prefs.edit().putLong("InstallTime", installTime).apply();
-        } else {
-            installTime = prefs.getLong("InstallTime", System.currentTimeMillis());
-        }
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -53,7 +41,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Background handler checking the active URL every 500ms
+        // Background loop checking url every 500ms
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -68,14 +56,14 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 500);
 
-        // Load the exact specific batch page on launch
+        // Directly open your specific batch URL permanently
         webView.loadUrl(homeUrl);
     }
 
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        // External link bypass mechanics
+        // Allowed External Links
         if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -87,24 +75,19 @@ public class MainActivity extends Activity {
             }
         }
 
-        // 2-Minute time constraint check (120,000 ms)
-        long currentTime = System.currentTimeMillis();
-        boolean isTimeUp = (currentTime - installTime) > 120000;
-
-        // STRICT SEPARATION RULES
+        // Check if user is navigating to the exact main batches list page
         boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
-        boolean isSpecificBatchPage = urlLower.contains("/study/batches/6a0ae06d427dcbb4d1b4e73f");
 
-        // Permanent blocks vs 2-minute twist rule logic
+        // STRICT PERMANENT BLOCK LIST (Specific batch page is completely safe and excluded)
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pw_thor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate") ||
-            isMainBatchesPage || // PERMANENT BLOCK
-            (isTimeUp && isSpecificBatchPage)) { // BLOCKS AFTER 2 MINUTES
+            isMainBatchesPage) {
             
             try {
                 webView.stopLoading();
-                webView.loadUrl("https://pwthor.live/study"); // Move app to safe zone layout
+                webView.loadUrl("https://pwthor.live/study"); // Redirect inside app to fallback zone
                 
+                // Force bounce to your Telegram channel
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -132,4 +115,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-            }
+                }
