@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
-    // EXACT HOME URL NODE
+    // EXACT HOME URL SET HERE
     private final String homeUrl = "https://pwthor.live/study/batches/6a0ae06d427dcbb4d1b4e73f";
     private long installTime = 0;
     private Handler urlCheckHandler = new Handler();
@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
         webView = new WebView(this);
         setContentView(webView);
 
-        // Timer Logic: App installation / first open time tracker
+        // Timer Logic for installation tracking
         SharedPreferences prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         if (!prefs.contains("InstallTime")) {
             installTime = System.currentTimeMillis();
@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // LIVE REAL-TIME URL MONITORING LOOP (Har 500ms me check karega)
+        // Background handler checking the active URL every 500ms
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -68,15 +68,14 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 500);
 
-        // Loading your exact requested specific batch page on app open
+        // Load the exact specific batch page on launch
         webView.loadUrl(homeUrl);
     }
 
-    // Common function to execute strict redirection blocking
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        // Force external system handling for downloads or main telegram links
+        // External link bypass mechanics
         if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -88,21 +87,24 @@ public class MainActivity extends Activity {
             }
         }
 
-        // 2 Minutes checker logic (120,000 milliseconds)
+        // 2-Minute time constraint check (120,000 ms)
         long currentTime = System.currentTimeMillis();
         boolean isTimeUp = (currentTime - installTime) > 120000;
 
-        // STRICT INTERCEPTION RULES
+        // STRICT SEPARATION RULES
+        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
+        boolean isSpecificBatchPage = urlLower.contains("/study/batches/6a0ae06d427dcbb4d1b4e73f");
+
+        // Permanent blocks vs 2-minute twist rule logic
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pw_thor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate") ||
-            (isTimeUp && urlLower.contains("/study/batches"))) {
+            isMainBatchesPage || // PERMANENT BLOCK
+            (isTimeUp && isSpecificBatchPage)) { // BLOCKS AFTER 2 MINUTES
             
             try {
-                // Clear webview to halt loading the restricted content
                 webView.stopLoading();
-                webView.loadUrl("https://pwthor.live/study"); // Fallback safety URL inside app
+                webView.loadUrl("https://pwthor.live/study"); // Move app to safe zone layout
                 
-                // Force push the user to your telegram invite link
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -130,4 +132,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-                    }
+            }
