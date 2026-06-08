@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study/batches/6a0ae06d427dcbb4d1b4e73f";
+    private final String homeUrl = "https://studystark.com/#batches";
     
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -81,8 +81,8 @@ public class MainActivity extends Activity {
         boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
 
         // STRICT PERMANENT BLOCK MATRIX (Specific batch path is completely safe)
-        if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pw_thor1") ||
-            urlLower.contains("/contact") || urlLower.contains("/study/donate") ||
+        if (urlLower.contains("t.me/studystark") || urlLower.contains("telegram.me/studystark") ||
+            urlLower.contains("/ct") || urlLower.contains("/e") ||
             isMainBatchesPage) {
             
             try {
