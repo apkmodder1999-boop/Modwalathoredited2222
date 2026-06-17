@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study/batches/6a103e34d4bd6c75cb7b5f40";
+    private final String homeUrl = "https://pwthor.live/study/batches/697ddb3b8aac1a4834702aeb";
     
     // ==========================================
     // EXPIRY SYSTEM CONFIGURATION
