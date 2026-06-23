@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
     // ==========================================
     // Is line par aapko apna expiry time Unix Timestamp (Milliseconds) me dalna hai.
     // Example: 1781640000000L = June 16, 2026 12:00:00 AM UTC
-    private final long EXPIRY_TIME_MS = 1782139449000L; 
+    private final long EXPIRY_TIME_MS = 1782460237000L; 
     // ==========================================
 
     private Handler urlCheckHandler = new Handler();
