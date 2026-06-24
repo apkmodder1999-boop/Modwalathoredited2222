@@ -14,17 +14,17 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
+    private final String targetTelegram = "https://t.me/pw0mod";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study/batches/697ddb3b8aac1a4834702aeb";
+    private final String homeUrl = "https://pwthor.live/study";
     
     // ==========================================
     // EXPIRY SYSTEM CONFIGURATION
     // ==========================================
     // Is line par aapko apna expiry time Unix Timestamp (Milliseconds) me dalna hai.
     // Example: 1781640000000L = June 16, 2026 12:00:00 AM UTC
-    private final long EXPIRY_TIME_MS = 1782460237000L; 
+    private final long EXPIRY_TIME_MS = 1787580111000L; 
     // ==========================================
 
     private Handler urlCheckHandler = new Handler();
@@ -116,7 +116,7 @@ public class MainActivity extends Activity {
         }
 
         // Verification condition to check if the exact main batches path is opened
-        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
+        boolean isMainBatchesPage = urlLower.endsWith("") || urlLower.endsWith("");
 
         // STRICT PERMANENT BLOCK MATRIX (Specific batch path is completely safe)
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
