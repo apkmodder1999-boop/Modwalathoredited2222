@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Base64;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -56,7 +55,7 @@ public class MainActivity extends Activity {
                 return checkAndRedirect(url);
             }
 
-            // Page load hona shuru hote hi hum custom CSS inject kar denge taaki original elements user ko dikhein hi nahi!
+            // Page banna shuru hote hi elements ko layout rendering se pehle hide karna (Anti-Flash Matrix)
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -67,10 +66,10 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 
-                // CSS backup ke liye onPageFinished par bhi inject kar dete hain
+                // CSS Backup execution
                 injectCustomCSS(view);
 
-                // Text change ("PW THOR" to "STUDY PANDA") karne ke liye short JavaScript matrix
+                // Text modification engine ("PW THOR" to "STUDY PANDA")
                 String jsCode = "javascript:(function() { " +
                         "var textFixInterval = setInterval(function() { " +
                         "   var spans = document.querySelectorAll('span'); " +
@@ -87,7 +86,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Background real-time listener (Checks state safely without crashing)
+        // Background loop execution layer
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -101,7 +100,7 @@ public class MainActivity extends Activity {
                         checkAndRedirect(currentUrl);
                     }
                 }
-                urlCheckHandler.postDelayed(this, 1000); // 1 second interval to keep it performance-friendly
+                urlCheckHandler.postDelayed(this, 1000); 
             }
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
@@ -110,36 +109,40 @@ public class MainActivity extends Activity {
         webView.loadUrl(homeUrl);
     }
 
-    // Helper method to hide elements instantly via CSS rule injection before rendering
+    // Custom CSS injection setup targeted for exact layout blocks removal
     private void injectCustomCSS(WebView view) {
         try {
-            // Hiding logic:
-            // 1. Logo with alt='PW THOR' -> Hidden
-            // 2. Avatar with .bg-muted class containing 'TH' -> Hidden via general selection
-            // 3. Sidebar text matching triggers handled via css layout rules
-            String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
-                         "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
-                         "div[class*='cursor-pointer']:has(span:contains('Donate Batch')) { display: none !important; }";
-            
-            // Safe universal JavaScript fallback inside CSS injection context to hidden targets explicitly
             String js = "var style = document.getElementById('custom-css-injection');" +
                         "if(!style) {" +
                         "   style = document.createElement('style');" +
                         "   style.id = 'custom-css-injection';" +
                         "   style.innerHTML = \"" +
-                        "       img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
+                        "       img[alt='PW THOR'], span.bg-muted, div.rounded-full.dark\\\\:bg-foreground { display: none !important; } " +
                         "       div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
                         "   \";" +
                         "   document.head.appendChild(style);" +
                         "}" +
-                        // Double check to forcefully drop them if dynamic DOM updates bypass stylesheets
+                        // Deep DOM dynamic processing queries loop
+                        "var runRemoverInterval = setInterval(function() {" +
+                        // A. Chat Vector Icon SVG target removal via path coordinate validation
+                        "var svgs = document.querySelectorAll('svg'); svgs.forEach(function(s){" +
+                        "   if(s.innerHTML && s.innerHTML.includes('M8 13.5H16M8 8.5H12')) { s.remove(); }" +
+                        "});" +
+                        // B. Sidebar Download Button container identification & purge
                         "var divs = document.querySelectorAll('div'); divs.forEach(function(d){" +
-                        "   if(d.innerText && (d.innerText.includes('Contact Us') || d.innerText.includes('Donate Batch'))) { d.style.setProperty('display', 'none', 'important'); }" +
-                        "});";
+                        "   if(d.innerText && (d.innerText.includes('Contact Us') || d.innerText.includes('Donate Batch') || d.innerText.includes('Download'))) {" +
+                        "       d.style.setProperty('display', 'none', 'important');" +
+                        "   }" +
+                        "   if(d.classList && d.classList.contains('rounded-full') && d.classList.contains('overflow-hidden')) {" +
+                        "       d.style.setProperty('display', 'none', 'important');" +
+                        "   }" +
+                        "});" +
+                        "}, 250);" +
+                        "setTimeout(function() { clearInterval(runRemoverInterval); }, 8000);";
             
             view.loadUrl("javascript:(function() { " + js + " })()");
         } catch (Exception e) {
-            // Suppress error
+            // Safe logging catch
         }
     }
 
@@ -162,7 +165,7 @@ public class MainActivity extends Activity {
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
+        if (urlLower.contains("static.pw.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -172,8 +175,6 @@ public class MainActivity extends Activity {
                 return false; 
             }
         }
-
-        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate")) {
