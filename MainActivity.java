@@ -55,56 +55,21 @@ public class MainActivity extends Activity {
                 return checkAndRedirect(url);
             }
 
-            // Page ka structure build hote hi elements ko block list me bhejna (Anti-Flash Matrix)
+            // Page loading start hote hi dynamic stylesheets inject honge
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                injectCustomCSS(view);
+                injectCustomDOMFix(view);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                
-                // CSS Backup layer execution
-                injectCustomCSS(view);
-
-                // 🔥 REAL-TIME DYNAMIC TEXT TEXTURE MODIFY ENGINE
-                String jsCode = "javascript:(function() { " +
-                        "var textFixInterval = setInterval(function() { " +
-                        
-                        // A. General Brand Switch: 'PW THOR' -> 'STUDY PANDA'
-                        "   var spans = document.querySelectorAll('span'); " +
-                        "   spans.forEach(function(span) { " +
-                        "       if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
-                        "           span.innerText = 'STUDY PANDA'; " +
-                        "       } " +
-                        "   }); " +
-                        
-                        // B. Naya Feature: Owner Card Text Replacement Matrix (PWTHOR owner Card Edit)
-                        "   var flexCols = document.querySelectorAll('div.flex.flex-col'); " +
-                        "   flexCols.forEach(function(card) { " +
-                        "       var ownerSpan = card.querySelector('span'); " +
-                        "       var textPara = card.querySelector('p'); " +
-                        "       if (ownerSpan && ownerSpan.innerText && ownerSpan.innerText.includes('PWTHOR owner')) { " +
-                        "           // Text and layout re-mapping with custom text color styling" +
-                        "           ownerSpan.innerText = 'I AM JITU'; " +
-                        "           ownerSpan.style.setProperty('color', '#00ffff', 'important'); " + // Aqua/Cyan variant color trigger
-                        "           if (textPara) { " +
-                        "               textPara.innerText = 'THIS APP IS TOTALLY FREE @NOTJITU OR @NOTJITU2'; " +
-                        "           } " +
-                        "       } " +
-                        "   }); " +
-                        
-                        "}, 200); " + // Engine cycles tracking refresh index
-                        "setTimeout(function() { clearInterval(textFixInterval); }, 9000); " +
-                        "})()";
-
-                view.loadUrl(jsCode);
+                injectCustomDOMFix(view);
             }
         });
 
-        // Loop tracker check system
+        // Background dynamic routing security listener (Safely loops every 1 second)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -123,55 +88,80 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
-        // Load the main app route cleanly
+        // Load the main secure layout path
         webView.loadUrl(homeUrl);
     }
 
-    // Advanced Element Purging Strategy (CSS Layout Level Blocks Injection)
-    private void injectCustomCSS(WebView view) {
+    // Dynamic Engine targeting text nodes, structural updates, and deep styling overrides
+    private void injectCustomDOMFix(WebView view) {
         try {
-            String js = "var style = document.getElementById('custom-css-injection');" +
-                        "if(!style) {" +
-                        "   style = document.createElement('style');" +
-                        "   style.id = 'custom-css-injection';" +
-                        "   style.innerHTML = \"" +
-                        "       img[alt='PW THOR'], span.bg-muted, div.rounded-full.dark\\\\:bg-foreground { display: none !important; } " +
-                        "       div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
-                        "   \";" +
-                        "   document.head.appendChild(style);" +
-                        "}" +
-                        // Deep layout mapping queries loop
-                        "var runRemoverInterval = setInterval(function() {" +
+            String js = "var runDynamicFixer = setInterval(function() {" +
                         
-                        // 1. Chat Vector Icon SVG block deletion
-                        "var svgs = document.querySelectorAll('svg'); svgs.forEach(function(s){" +
-                        "   if(s.innerHTML && s.innerHTML.includes('M8 13.5H16M8 8.5H12')) { s.remove(); }" +
-                        "});" +
+                        // 1. GLOBAL TEXT REPLACEMENTS ('PW THOR' -> 'STUDY PANDA' & 'PWTHOR owner' text block updates)
+                        "   var elements = document.getElementsByTagName('*');" +
+                        "   for (var i = 0; i < elements.length; i++) {" +
+                        "       var el = elements[i];" +
+                        "       for (var j = 0; j < el.childNodes.length; j++) {" +
+                        "           var node = el.childNodes[j];" +
+                        "           if (node.nodeType === 3) {" + // Text Node process flag
+                        "               var text = node.nodeValue;" +
+                        "               " +
+                        "               // A. Brand Text Replace" +
+                        "               if (text.trim() === 'PW THOR') {" +
+                        "                   node.nodeValue = 'STUDY PANDA';" +
+                        "               }" +
+                        "               " +
+                        "               // B. Card Title Text Replace" +
+                        "               if (text.trim() === 'PWTHOR owner') {" +
+                        "                   node.nodeValue = 'I AM JITU';" +
+                        "                   el.style.setProperty('color', '#00ffff', 'important');" + // Dynamic Aqua Force Style Injection
+                        "               }" +
+                        "               " +
+                        "               // C. Card Desc Text Replace" +
+                        "               if (text.trim() === 'education must be free for eveyone @pwthor') {" +
+                        "                   node.nodeValue = 'THIS APP IS TOTALLY FREE @NOTJITU OR @NOTJITU2';" +
+                        "                   el.style.setProperty('color', '#e5e7eb', 'important');" +
+                        "               }" +
+                        "           }" +
+                        "       }" +
+                        "       " +
+                        "       // 2. UNIVERSAL DOWNLOAD ELEMENT DELETION MATRIX" +
+                        "       if (el.innerText && el.innerText.trim() === 'Download') {" +
+                        "           var parentNode = el.closest('.Typography_root__HsO0C') || el.closest('div.flex') || el;" +
+                        "           if(parentNode) { parentNode.remove(); }" +
+                        "       }" +
+                        "   }" +
+
+                        // 3. REMOVE IMAGES, SIDEBAR BLOCKS AND CHAT VECTOR ICONS
+                        "   var imgLogo = document.querySelector(\"img[alt='PW THOR']\");" +
+                        "   if(imgLogo) { imgLogo.remove(); }" +
+                        "   " +
+                        "   var mutedSpans = document.querySelectorAll('span.bg-muted');" +
+                        "   mutedSpans.forEach(function(sp) { if(sp.innerText === 'TH') { sp.remove(); } });" +
+                        "   " +
+                        "   var avatarDivs = document.querySelectorAll('div.rounded-full.overflow-hidden');" +
+                        "   avatarDivs.forEach(function(av) { av.remove(); });" +
+                        "   " +
+                        "   var chatIcons = document.querySelectorAll('svg');" +
+                        "   chatIcons.forEach(function(svg) {" +
+                        "       if (svg.innerHTML && svg.innerHTML.includes('M8 13.5H16M8 8.5H12')) { svg.remove(); }" +
+                        "   });" +
+                        "   " +
+                        "   var layoutDivs = document.querySelectorAll('div');" +
+                        "   layoutDivs.forEach(function(div) {" +
+                        "       if (div.innerText && (div.innerText.includes('Contact Us') || div.innerText.includes('Donate Batch'))) {" +
+                        "           div.remove();" +
+                        "       }" +
+                        "   });" +
+
+                        "}, 150);" + // Dynamic 150ms cycle speed keeps layout changes invisible to the naked eye
                         
-                        // 2. Global Download Button Purge (Deletes 'Download' elements from everywhere layout-wide)
-                        "var fontSemiactiveSpans = document.querySelectorAll('span.text-white'); spans.forEach(function(sp){" +
-                        "   if(sp.innerText === 'Download') {" +
-                        "       var parentCheck = sp.closest('div.Typography_root__HsO0C');" +
-                        "       if(parentCheck) { parentCheck.remove(); }" +
-                        "   }" +
-                        "});" +
-                        
-                        // 3. Flex Sidebar Row Actions Controller (Contact, Donate, Download text mapping)
-                        "var divs = document.querySelectorAll('div'); divs.forEach(function(d){" +
-                        "   if(d.innerText && (d.innerText.includes('Contact Us') || d.innerText.includes('Donate Batch') || d.innerText.includes('Download'))) {" +
-                        "       d.style.setProperty('display', 'none', 'important');" +
-                        "       d.remove();" + // Global layer remove function execution
-                        "   }" +
-                        "   if(d.classList && d.classList.contains('rounded-full') && d.classList.contains('overflow-hidden')) {" +
-                        "       d.style.setProperty('display', 'none', 'important');" +
-                        "   }" +
-                        "});" +
-                        "}, 250);" +
-                        "setTimeout(function() { clearInterval(runRemoverInterval); }, 8500);";
+                        // Safety timeout to save phone battery after initial page render cycle
+                        "setTimeout(function() { clearInterval(runDynamicFixer); }, 10000);";
             
             view.loadUrl("javascript:(function() { " + js + " })()");
         } catch (Exception e) {
-            // Error shield safety line
+            // Anti-crash suppression line
         }
     }
 
@@ -186,7 +176,7 @@ public class MainActivity extends Activity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } catch (Exception e) {
-            // Fail safe exit hook
+            // Fallback
         }
         finish(); 
     }
@@ -194,7 +184,7 @@ public class MainActivity extends Activity {
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        if (urlLower.contains("static.pw.live") || url.equals(targetTelegram)) {
+        if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
