@@ -17,14 +17,12 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/notjitu2";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study";
+    private final String homeUrl = "https://pwthor.live/study/batches";
     
     // ==========================================
     // EXPIRY SYSTEM CONFIGURATION
     // ==========================================
-    // Is line par aapko apna expiry time Unix Timestamp (Milliseconds) me dalna hai.
-    // Current target: 1787580111000L
-    private final long EXPIRY_TIME_MS = 1782521070000L; 
+    private final long EXPIRY_TIME_MS = 1782552308000L; 
     // ==========================================
 
     private Handler urlCheckHandler = new Handler();
@@ -37,7 +35,7 @@ public class MainActivity extends Activity {
         // 1. Sabse pehle check karega ki app expire toh nahi hui
         if (isAppExpired()) {
             redirectToTelegramAndExit();
-            return; // Aage ka WebView load nahi hoga
+            return; 
         }
 
         webView = new WebView(this);
@@ -87,14 +85,13 @@ public class MainActivity extends Activity {
                         "   } " +
                         "}); " +
 
-                        "}, 300); " + // Har 300ms me checking chalegi dynamic elements ke liye
+                        "}, 300); " + 
                         
-                        // Performance backup: 10 seconds baad interval clear ho jayega
+                        // Performance backup
                         "setTimeout(function() { clearInterval(runDOMElementsFix); }, 10000); " +
                         
                         "})()";
 
-                // Javascript inject karna
                 view.loadUrl(jsCode);
             }
         });
@@ -103,7 +100,6 @@ public class MainActivity extends Activity {
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
-                // Real-time loop me bhi check karega agar runtime me expire ho jaye
                 if (isAppExpired()) {
                     redirectToTelegramAndExit();
                     return;
@@ -119,16 +115,14 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 500);
 
-        // App opens directly to your requested specific batch page permanently
+        // App opens homeUrl directly
         webView.loadUrl(homeUrl);
     }
 
-    // App expiry check karne ka helper method
     private boolean isAppExpired() {
         return System.currentTimeMillis() >= EXPIRY_TIME_MS;
     }
 
-    // Expire hone par direct Telegram open karne aur app close karne ka method
     private void redirectToTelegramAndExit() {
         try {
             Toast.makeText(this, "App validity expired!", Toast.LENGTH_LONG).show();
@@ -138,13 +132,13 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             // Fallback
         }
-        finish(); // App activity ko terminate kar dega
+        finish(); 
     }
 
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        // Force System External Launch for Allowed Links
+        // Allowed links external launch bypass
         if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -156,20 +150,17 @@ public class MainActivity extends Activity {
             }
         }
 
-        // Verification condition to check if the exact main batches path is opened
-        boolean isMainBatchesPage = urlLower.endsWith("") || urlLower.endsWith("");
+        // FIXED: Empty string logic fixed so it doesn't auto-block your homeUrl
+        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
 
-        // STRICT PERMANENT BLOCK MATRIX (Specific batch path is completely safe)
+        // STRICT PERMANENT BLOCK MATRIX
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
-            urlLower.contains("/contact") || urlLower.contains("/study/donate") ||
-            isMainBatchesPage) {
+            urlLower.contains("/contact") || urlLower.contains("/study/donate")) {
             
             try {
                 webView.stopLoading();
-                // If user hits blocked page, fallback instantly to your custom home batch link
                 webView.loadUrl(homeUrl); 
                 
-                // Instantly redirect to Telegram
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -197,5 +188,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-    }
-                    
+                                    }
