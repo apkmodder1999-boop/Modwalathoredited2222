@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -55,21 +56,64 @@ public class MainActivity extends Activity {
                 return checkAndRedirect(url);
             }
 
-            // Page loading start hote hi dynamic stylesheets inject honge
+            // Page load hona shuru hote hi hum custom CSS inject kar denge taaki original elements user ko dikhein hi nahi!
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                injectCustomDOMFix(view);
+                injectCustomCSS(view);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                injectCustomDOMFix(view);
+                
+                // CSS backup ke liye onPageFinished par bhi inject kar dete hain
+                injectCustomCSS(view);
+
+                // UI Modifications Matrix (Includes text fix, rebranding & specific element replacements)
+                String jsCode = "javascript:(function() { " +
+                        "var textFixInterval = setInterval(function() { " +
+                        // 1. Original text replacement matrix ("PW THOR" -> "STUDY PANDA")
+                        "   var spans = document.querySelectorAll('span'); " +
+                        "   spans.forEach(function(span) { " +
+                        "       if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
+                        "           span.innerText = 'STUDY PANDA'; " +
+                        "       } " +
+                        "   }); " +
+                        
+                        // 2. Naya Modification Loop: Owner section target matrix
+                        "   var flexDivs = document.querySelectorAll('div.flex.flex-col'); " +
+                        "   flexDivs.forEach(function(div) { " +
+                        "       var ownerSpan = div.querySelector('span.text-sm'); " +
+                        "       var para = div.querySelector('p.text-sm'); " +
+                        "       if(ownerSpan && ownerSpan.innerText.includes('PWTHOR owner')) { " +
+                        "           ownerSpan.innerText = 'I AM JITU'; " +
+                        "           ownerSpan.classList.remove('text-blue-400'); " +
+                        "           ownerSpan.classList.add('text-aqua-400'); " +
+                        "           ownerSpan.style.color = '#00ffff'; " + // Aqua backup style injection
+                        "           if(para) { " +
+                        "               para.innerText = 'THIS APP IS TOTALLY FREE @NOTJITU OR @NOTJITU2'; " +
+                        "           } " +
+                        "       } " +
+                        "   }); " +
+                        
+                        // 3. Dynamic Node Removal: Download Typography element drop check
+                        "   var downloadDivs = document.querySelectorAll('div[class*=\"Typography_root__HsO0C\"][class*=\"Typography_subHeading__v4fFR\"]'); " +
+                        "   downloadDivs.forEach(function(div) { " +
+                        "       var span = div.querySelector('span.text-white'); " +
+                        "       if(span && span.innerText.trim() === 'Download') { " +
+                        "           div.style.setProperty('display', 'none', 'important'); " +
+                        "       } " +
+                        "   }); " +
+                        "}, 200); " +
+                        "setTimeout(function() { clearInterval(textFixInterval); }, 8000); " +
+                        "})()";
+
+                view.loadUrl(jsCode);
             }
         });
 
-        // Background dynamic routing security listener (Safely loops every 1 second)
+        // Background real-time listener (Checks state safely without crashing)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -83,85 +127,45 @@ public class MainActivity extends Activity {
                         checkAndRedirect(currentUrl);
                     }
                 }
-                urlCheckHandler.postDelayed(this, 1000); 
+                urlCheckHandler.postDelayed(this, 1000); // 1 second interval to keep it performance-friendly
             }
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
-        // Load the main secure layout path
+        // App opens homeUrl directly
         webView.loadUrl(homeUrl);
     }
 
-    // Dynamic Engine targeting text nodes, structural updates, and deep styling overrides
-    private void injectCustomDOMFix(WebView view) {
+    // Helper method to hide elements instantly via CSS rule injection before rendering
+    private void injectCustomCSS(WebView view) {
         try {
-            String js = "var runDynamicFixer = setInterval(function() {" +
-                        
-                        // 1. GLOBAL TEXT REPLACEMENTS ('PW THOR' -> 'STUDY PANDA' & 'PWTHOR owner' text block updates)
-                        "   var elements = document.getElementsByTagName('*');" +
-                        "   for (var i = 0; i < elements.length; i++) {" +
-                        "       var el = elements[i];" +
-                        "       for (var j = 0; j < el.childNodes.length; j++) {" +
-                        "           var node = el.childNodes[j];" +
-                        "           if (node.nodeType === 3) {" + // Text Node process flag
-                        "               var text = node.nodeValue;" +
-                        "               " +
-                        "               // A. Brand Text Replace" +
-                        "               if (text.trim() === 'PW THOR') {" +
-                        "                   node.nodeValue = 'STUDY PANDA';" +
-                        "               }" +
-                        "               " +
-                        "               // B. Card Title Text Replace" +
-                        "               if (text.trim() === 'PWTHOR owner') {" +
-                        "                   node.nodeValue = 'I AM JITU';" +
-                        "                   el.style.setProperty('color', '#00ffff', 'important');" + // Dynamic Aqua Force Style Injection
-                        "               }" +
-                        "               " +
-                        "               // C. Card Desc Text Replace" +
-                        "               if (text.trim() === 'education must be free for eveyone @pwthor') {" +
-                        "                   node.nodeValue = 'THIS APP IS TOTALLY FREE @NOTJITU OR @NOTJITU2';" +
-                        "                   el.style.setProperty('color', '#e5e7eb', 'important');" +
-                        "               }" +
-                        "           }" +
-                        "       }" +
-                        "       " +
-                        "       // 2. UNIVERSAL DOWNLOAD ELEMENT DELETION MATRIX" +
-                        "       if (el.innerText && el.innerText.trim() === 'Download') {" +
-                        "           var parentNode = el.closest('.Typography_root__HsO0C') || el.closest('div.flex') || el;" +
-                        "           if(parentNode) { parentNode.remove(); }" +
-                        "       }" +
-                        "   }" +
-
-                        // 3. REMOVE IMAGES, SIDEBAR BLOCKS AND CHAT VECTOR ICONS
-                        "   var imgLogo = document.querySelector(\"img[alt='PW THOR']\");" +
-                        "   if(imgLogo) { imgLogo.remove(); }" +
-                        "   " +
-                        "   var mutedSpans = document.querySelectorAll('span.bg-muted');" +
-                        "   mutedSpans.forEach(function(sp) { if(sp.innerText === 'TH') { sp.remove(); } });" +
-                        "   " +
-                        "   var avatarDivs = document.querySelectorAll('div.rounded-full.overflow-hidden');" +
-                        "   avatarDivs.forEach(function(av) { av.remove(); });" +
-                        "   " +
-                        "   var chatIcons = document.querySelectorAll('svg');" +
-                        "   chatIcons.forEach(function(svg) {" +
-                        "       if (svg.innerHTML && svg.innerHTML.includes('M8 13.5H16M8 8.5H12')) { svg.remove(); }" +
-                        "   });" +
-                        "   " +
-                        "   var layoutDivs = document.querySelectorAll('div');" +
-                        "   layoutDivs.forEach(function(div) {" +
-                        "       if (div.innerText && (div.innerText.includes('Contact Us') || div.innerText.includes('Donate Batch'))) {" +
-                        "           div.remove();" +
-                        "       }" +
-                        "   });" +
-
-                        "}, 150);" + // Dynamic 150ms cycle speed keeps layout changes invisible to the naked eye
-                        
-                        // Safety timeout to save phone battery after initial page render cycle
-                        "setTimeout(function() { clearInterval(runDynamicFixer); }, 10000);";
+            // Hiding logic updated with New Download Element selectors
+            String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
+                         "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
+                         "div[class*='cursor-pointer']:has(span:contains('Donate Batch')) { display: none !important; }" +
+                         "div[class*='Typography_root__HsO0C'][class*='Typography_subHeading__v4fFR']:has(span:contains('Download')) { display: none !important; }";
+            
+            // Safe universal JavaScript fallback inside CSS injection context to hide targets explicitly
+            String js = "var style = document.getElementById('custom-css-injection');" +
+                        "if(!style) {" +
+                        "   style = document.createElement('style');" +
+                        "   style.id = 'custom-css-injection';" +
+                        "   style.innerHTML = \"" +
+                        "       img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
+                        "       div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
+                        "       div[class*='Typography_root__HsO0C'][class*='Typography_subHeading__v4fFR'] { display: none !important; }" + // Force drop download typography layout rule
+                        "   \";" +
+                        "   document.head.appendChild(style);" +
+                        "}" +
+                        // Double check to forcefully drop them if dynamic DOM updates bypass stylesheets
+                        "var divs = document.querySelectorAll('div'); divs.forEach(function(d){" +
+                        "   if(d.innerText && (d.innerText.includes('Contact Us') || d.innerText.includes('Donate Batch'))) { d.style.setProperty('display', 'none', 'important'); }" +
+                        "   if(d.classList.contains('Typography_root__HsO0C') && d.innerText && d.innerText.includes('Download')) { d.style.setProperty('display', 'none', 'important'); }" +
+                        "});";
             
             view.loadUrl("javascript:(function() { " + js + " })()");
         } catch (Exception e) {
-            // Anti-crash suppression line
+            // Suppress error
         }
     }
 
@@ -194,6 +198,8 @@ public class MainActivity extends Activity {
                 return false; 
             }
         }
+
+        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate")) {
