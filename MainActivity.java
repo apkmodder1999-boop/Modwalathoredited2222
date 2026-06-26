@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -22,7 +23,7 @@ public class MainActivity extends Activity {
     // ==========================================
     // EXPIRY SYSTEM CONFIGURATION
     // ==========================================
-    private final long EXPIRY_TIME_MS = 1782552308000L; 
+    private final long EXPIRY_TIME_MS = 1787580111000L; 
     // ==========================================
 
     private Handler urlCheckHandler = new Handler();
@@ -55,48 +56,38 @@ public class MainActivity extends Activity {
                 return checkAndRedirect(url);
             }
 
-            // =======================================================
-            // 🔥 EMBEDDED FEATURE: DOM ELEMENT EDIT & REMOVE MATRIX
-            // =======================================================
+            // Page load hona shuru hote hi hum custom CSS inject kar denge taaki original elements user ko dikhein hi nahi!
+            @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                injectCustomCSS(view);
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                
+                // CSS backup ke liye onPageFinished par bhi inject kar dete hain
+                injectCustomCSS(view);
 
+                // Text change ("PW THOR" to "STUDY PANDA") karne ke liye short JavaScript matrix
                 String jsCode = "javascript:(function() { " +
-                        "var runDOMElementsFix = setInterval(function() { " +
-                        
-                        // 1. Logo image ko remove karna [alt='PW THOR']
-                        "var logoImg = document.querySelector(\"img[alt='PW THOR']\"); " +
-                        "if(logoImg) { logoImg.remove(); } " +
-
-                        // 2. Contact Us aur Donate Batch div ko completely remove karna
-                        "var divs = document.querySelectorAll('div'); " +
-                        "divs.forEach(function(div) { " +
-                        "   if(div.innerText && div.innerText.includes('Contact Us')) { div.remove(); } " +
-                        "   if(div.innerText && div.innerText.includes('Donate Batch')) { div.remove(); } " +
-                        "}); " +
-
-                        // 3. Avatar text 'TH' span ko remove karna aur 'PW THOR' ko 'STUDY PANDA' me badalna
-                        "var spans = document.querySelectorAll('span'); " +
-                        "spans.forEach(function(span) { " +
-                        "   if(span.innerText === 'TH' && span.classList.contains('bg-muted')) { span.remove(); } " +
-                        "   if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
-                        "       span.innerText = 'STUDY PANDA'; " +
-                        "   } " +
-                        "}); " +
-
-                        "}, 300); " + 
-                        
-                        // Performance backup
-                        "setTimeout(function() { clearInterval(runDOMElementsFix); }, 10000); " +
-                        
+                        "var textFixInterval = setInterval(function() { " +
+                        "   var spans = document.querySelectorAll('span'); " +
+                        "   spans.forEach(function(span) { " +
+                        "       if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
+                        "           span.innerText = 'STUDY PANDA'; " +
+                        "       } " +
+                        "   }); " +
+                        "}, 200); " +
+                        "setTimeout(function() { clearInterval(textFixInterval); }, 8000); " +
                         "})()";
 
                 view.loadUrl(jsCode);
             }
         });
 
-        // Background real-time listener (Checks Next.js state shifts every 500ms)
+        // Background real-time listener (Checks state safely without crashing)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -106,17 +97,50 @@ public class MainActivity extends Activity {
                 }
                 if (webView != null) {
                     String currentUrl = webView.getUrl();
-                    if (currentUrl != null) {
+                    if (currentUrl != null && !currentUrl.equals("about:blank")) {
                         checkAndRedirect(currentUrl);
                     }
                 }
-                urlCheckHandler.postDelayed(this, 500);
+                urlCheckHandler.postDelayed(this, 1000); // 1 second interval to keep it performance-friendly
             }
         };
-        urlCheckHandler.postDelayed(urlCheckRunnable, 500);
+        urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
         // App opens homeUrl directly
         webView.loadUrl(homeUrl);
+    }
+
+    // Helper method to hide elements instantly via CSS rule injection before rendering
+    private void injectCustomCSS(WebView view) {
+        try {
+            // Hiding logic:
+            // 1. Logo with alt='PW THOR' -> Hidden
+            // 2. Avatar with .bg-muted class containing 'TH' -> Hidden via general selection
+            // 3. Sidebar text matching triggers handled via css layout rules
+            String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
+                         "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
+                         "div[class*='cursor-pointer']:has(span:contains('Donate Batch')) { display: none !important; }";
+            
+            // Safe universal JavaScript fallback inside CSS injection context to hidden targets explicitly
+            String js = "var style = document.getElementById('custom-css-injection');" +
+                        "if(!style) {" +
+                        "   style = document.createElement('style');" +
+                        "   style.id = 'custom-css-injection';" +
+                        "   style.innerHTML = \"" +
+                        "       img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
+                        "       div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
+                        "   \";" +
+                        "   document.head.appendChild(style);" +
+                        "}" +
+                        // Double check to forcefully drop them if dynamic DOM updates bypass stylesheets
+                        "var divs = document.querySelectorAll('div'); divs.forEach(function(d){" +
+                        "   if(d.innerText && (d.innerText.includes('Contact Us') || d.innerText.includes('Donate Batch'))) { d.style.setProperty('display', 'none', 'important'); }" +
+                        "});";
+            
+            view.loadUrl("javascript:(function() { " + js + " })()");
+        } catch (Exception e) {
+            // Suppress error
+        }
     }
 
     private boolean isAppExpired() {
@@ -138,7 +162,6 @@ public class MainActivity extends Activity {
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        // Allowed links external launch bypass
         if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -150,10 +173,8 @@ public class MainActivity extends Activity {
             }
         }
 
-        // FIXED: Empty string logic fixed so it doesn't auto-block your homeUrl
         boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
 
-        // STRICT PERMANENT BLOCK MATRIX
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate")) {
             
@@ -188,4 +209,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-                                    }
+}
