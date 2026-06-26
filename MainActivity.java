@@ -14,17 +14,17 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/pw0mod";
+    private final String targetTelegram = "https://t.me/notjitu2";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study/batches";
+    private final String homeUrl = "https://pwthor.live/study";
     
     // ==========================================
     // EXPIRY SYSTEM CONFIGURATION
     // ==========================================
     // Is line par aapko apna expiry time Unix Timestamp (Milliseconds) me dalna hai.
-    // Example: 1781640000000L = June 16, 2026 12:00:00 AM UTC
-    private final long EXPIRY_TIME_MS = 1787580111000L; 
+    // Current target: 1787580111000L
+    private final long EXPIRY_TIME_MS = 1782521070000L; 
     // ==========================================
 
     private Handler urlCheckHandler = new Handler();
@@ -55,6 +55,47 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
                 return checkAndRedirect(url);
+            }
+
+            // =======================================================
+            // 🔥 EMBEDDED FEATURE: DOM ELEMENT EDIT & REMOVE MATRIX
+            // =======================================================
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                String jsCode = "javascript:(function() { " +
+                        "var runDOMElementsFix = setInterval(function() { " +
+                        
+                        // 1. Logo image ko remove karna [alt='PW THOR']
+                        "var logoImg = document.querySelector(\"img[alt='PW THOR']\"); " +
+                        "if(logoImg) { logoImg.remove(); } " +
+
+                        // 2. Contact Us aur Donate Batch div ko completely remove karna
+                        "var divs = document.querySelectorAll('div'); " +
+                        "divs.forEach(function(div) { " +
+                        "   if(div.innerText && div.innerText.includes('Contact Us')) { div.remove(); } " +
+                        "   if(div.innerText && div.innerText.includes('Donate Batch')) { div.remove(); } " +
+                        "}); " +
+
+                        // 3. Avatar text 'TH' span ko remove karna aur 'PW THOR' ko 'STUDY PANDA' me badalna
+                        "var spans = document.querySelectorAll('span'); " +
+                        "spans.forEach(function(span) { " +
+                        "   if(span.innerText === 'TH' && span.classList.contains('bg-muted')) { span.remove(); } " +
+                        "   if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
+                        "       span.innerText = 'STUDY PANDA'; " +
+                        "   } " +
+                        "}); " +
+
+                        "}, 300); " + // Har 300ms me checking chalegi dynamic elements ke liye
+                        
+                        // Performance backup: 10 seconds baad interval clear ho jayega
+                        "setTimeout(function() { clearInterval(runDOMElementsFix); }, 10000); " +
+                        
+                        "})()";
+
+                // Javascript inject karna
+                view.loadUrl(jsCode);
             }
         });
 
@@ -156,4 +197,5 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-            }
+    }
+                    
