@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/notjitu2";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study/batches";
+    private final String homeUrl = "https://pwthor.live/study";
     
     // ==========================================
     // EXPIRY SYSTEM CONFIGURATION
@@ -188,7 +188,7 @@ public class MainActivity extends Activity {
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
+        if (urlLower.contains("static.pw.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
