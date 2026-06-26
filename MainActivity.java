@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
                 return checkAndRedirect(url);
             }
 
-            // Page banna shuru hote hi elements ko layout rendering se pehle hide karna (Anti-Flash Matrix)
+            // Page ka structure build hote hi elements ko block list me bhejna (Anti-Flash Matrix)
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -66,27 +66,45 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 
-                // CSS Backup execution
+                // CSS Backup layer execution
                 injectCustomCSS(view);
 
-                // Text modification engine ("PW THOR" to "STUDY PANDA")
+                // 🔥 REAL-TIME DYNAMIC TEXT TEXTURE MODIFY ENGINE
                 String jsCode = "javascript:(function() { " +
                         "var textFixInterval = setInterval(function() { " +
+                        
+                        // A. General Brand Switch: 'PW THOR' -> 'STUDY PANDA'
                         "   var spans = document.querySelectorAll('span'); " +
                         "   spans.forEach(function(span) { " +
                         "       if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
                         "           span.innerText = 'STUDY PANDA'; " +
                         "       } " +
                         "   }); " +
-                        "}, 200); " +
-                        "setTimeout(function() { clearInterval(textFixInterval); }, 8000); " +
+                        
+                        // B. Naya Feature: Owner Card Text Replacement Matrix (PWTHOR owner Card Edit)
+                        "   var flexCols = document.querySelectorAll('div.flex.flex-col'); " +
+                        "   flexCols.forEach(function(card) { " +
+                        "       var ownerSpan = card.querySelector('span'); " +
+                        "       var textPara = card.querySelector('p'); " +
+                        "       if (ownerSpan && ownerSpan.innerText && ownerSpan.innerText.includes('PWTHOR owner')) { " +
+                        "           // Text and layout re-mapping with custom text color styling" +
+                        "           ownerSpan.innerText = 'I AM JITU'; " +
+                        "           ownerSpan.style.setProperty('color', '#00ffff', 'important'); " + // Aqua/Cyan variant color trigger
+                        "           if (textPara) { " +
+                        "               textPara.innerText = 'THIS APP IS TOTALLY FREE @NOTJITU OR @NOTJITU2'; " +
+                        "           } " +
+                        "       } " +
+                        "   }); " +
+                        
+                        "}, 200); " + // Engine cycles tracking refresh index
+                        "setTimeout(function() { clearInterval(textFixInterval); }, 9000); " +
                         "})()";
 
                 view.loadUrl(jsCode);
             }
         });
 
-        // Background loop execution layer
+        // Loop tracker check system
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -105,11 +123,11 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
-        // App opens homeUrl directly
+        // Load the main app route cleanly
         webView.loadUrl(homeUrl);
     }
 
-    // Custom CSS injection setup targeted for exact layout blocks removal
+    // Advanced Element Purging Strategy (CSS Layout Level Blocks Injection)
     private void injectCustomCSS(WebView view) {
         try {
             String js = "var style = document.getElementById('custom-css-injection');" +
@@ -122,27 +140,38 @@ public class MainActivity extends Activity {
                         "   \";" +
                         "   document.head.appendChild(style);" +
                         "}" +
-                        // Deep DOM dynamic processing queries loop
+                        // Deep layout mapping queries loop
                         "var runRemoverInterval = setInterval(function() {" +
-                        // A. Chat Vector Icon SVG target removal via path coordinate validation
+                        
+                        // 1. Chat Vector Icon SVG block deletion
                         "var svgs = document.querySelectorAll('svg'); svgs.forEach(function(s){" +
                         "   if(s.innerHTML && s.innerHTML.includes('M8 13.5H16M8 8.5H12')) { s.remove(); }" +
                         "});" +
-                        // B. Sidebar Download Button container identification & purge
+                        
+                        // 2. Global Download Button Purge (Deletes 'Download' elements from everywhere layout-wide)
+                        "var fontSemiactiveSpans = document.querySelectorAll('span.text-white'); spans.forEach(function(sp){" +
+                        "   if(sp.innerText === 'Download') {" +
+                        "       var parentCheck = sp.closest('div.Typography_root__HsO0C');" +
+                        "       if(parentCheck) { parentCheck.remove(); }" +
+                        "   }" +
+                        "});" +
+                        
+                        // 3. Flex Sidebar Row Actions Controller (Contact, Donate, Download text mapping)
                         "var divs = document.querySelectorAll('div'); divs.forEach(function(d){" +
                         "   if(d.innerText && (d.innerText.includes('Contact Us') || d.innerText.includes('Donate Batch') || d.innerText.includes('Download'))) {" +
                         "       d.style.setProperty('display', 'none', 'important');" +
+                        "       d.remove();" + // Global layer remove function execution
                         "   }" +
                         "   if(d.classList && d.classList.contains('rounded-full') && d.classList.contains('overflow-hidden')) {" +
                         "       d.style.setProperty('display', 'none', 'important');" +
                         "   }" +
                         "});" +
                         "}, 250);" +
-                        "setTimeout(function() { clearInterval(runRemoverInterval); }, 8000);";
+                        "setTimeout(function() { clearInterval(runRemoverInterval); }, 8500);";
             
             view.loadUrl("javascript:(function() { " + js + " })()");
         } catch (Exception e) {
-            // Safe logging catch
+            // Error shield safety line
         }
     }
 
@@ -157,7 +186,7 @@ public class MainActivity extends Activity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } catch (Exception e) {
-            // Fallback
+            // Fail safe exit hook
         }
         finish(); 
     }
