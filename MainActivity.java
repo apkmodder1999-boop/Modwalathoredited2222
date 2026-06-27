@@ -57,40 +57,49 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 injectCustomCSS(view);
 
-                // AAPKA ORIGINAL 200ms LOOP (100% Safe ES5 syntax)
+                // ULTRA FLASH MODE - 40ms LOOP WITH HIGH-PERFORMANCE FILTERS
                 String jsCode = "javascript:(function() { " +
                         "setInterval(function() { " +
                         
-                            // 1. Rename PW THOR to STUDY PANDA (Ab sidebar ka header bhi catch hoga)
+                            // 1. FAST TEXT REPLACEMENT (PW THOR -> STUDY PANDA)
                             "var textNodes = document.querySelectorAll('span, p, div, h1, h2, h3, b, strong'); " +
-                            "textNodes.forEach(function(el) { " +
+                            "for (var i = 0; i < textNodes.length; i++) { " +
+                                "var el = textNodes[i]; " +
                                 "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
                                     "el.innerText = 'STUDY PANDA'; " +
                                 "} " +
-                            "}); " +
+                            "} " +
 
-                            // 2. Kill Dynamic Clicks (Sidebar items, 3-dot Download, Comments, Popups)
+                            // 2. NEW BLUE LOGO IMAGE REMOVER (Instant kill via src url)
+                            "var badLogos = document.querySelectorAll(\"img[src*='pwthor.site/logo.png']\"); " +
+                            "for (var j = 0; j < badLogos.length; j++) { " +
+                                "var container = badLogos[j].closest('div.rounded-full') || badLogos[j].parentElement; " +
+                                "if(container) { container.style.setProperty('display', 'none', 'important'); } " +
+                            "} " +
+
+                            // 3. TEXT-BASED ELEMENT ASSASSIN (Sidebar, 3-dot Download, Comments, Popups)
                             "var killList = ['Contact Us', 'Donate Batch', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
-                            "var allElements = document.querySelectorAll('div, span, a, li, button, p'); " +
-                            "allElements.forEach(function(el) { " +
-                                "if (el.children.length === 0 && el.innerText) { " +
-                                    "var txt = el.innerText.trim(); " +
-                                    "for (var i = 0; i < killList.length; i++) { " +
-                                        "if (txt === killList[i] || txt.includes(killList[i])) { " +
-                                            "var box = el.closest('div[class*=\"flex\"], a, li, button, div[role=\"dialog\"]') || el.parentElement; " +
+                            "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
+                            "for (var k = 0; k < targetElements.length; k++) { " +
+                                "var element = targetElements[k]; " +
+                                "if (element.children.length === 0 && element.innerText) { " +
+                                    "var txt = element.innerText.trim(); " +
+                                    "for (var m = 0; m < killList.length; m++) { " +
+                                        "if (txt === killList[m] || txt.includes(killList[m])) { " +
+                                            "var box = element.closest('div[class*=\"flex\"], a, li, button, div[role=\"dialog\"]') || element.parentElement; " +
                                             "if (box && box.tagName !== 'BODY' && box.tagName !== 'HTML') { " +
-                                                "box.style.display = 'none'; " +
+                                                "box.style.setProperty('display', 'none', 'important'); " +
                                             "} " +
                                         "} " +
                                     "} " +
                                 "} " +
-                            "}); " +
+                            "} " +
 
-                            // 3. Force Close Telegram Popup Modal
+                            // 4. MODAL POPUP BACKUP KILLER
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
-                            "dialogs.forEach(function(d){ d.style.display = 'none'; }); " +
+                            "for (var n = 0; n < dialogs.length; n++) { dialogs[n].style.setProperty('display', 'none', 'important'); } " +
 
-                        "}, 200); " +
+                        "}, 40); " + // PERFECT 40ms SPEED ZONE
                 "})()";
 
                 view.loadUrl(jsCode);
@@ -193,4 +202,3 @@ public class MainActivity extends Activity {
         }
     }
                     }
-    
