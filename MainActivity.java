@@ -77,7 +77,13 @@ public class MainActivity extends Activity {
                                 "if(container) { container.style.setProperty('display', 'none', 'important'); } " +
                             "} " +
 
-                            // 3. TEXT-BASED ELEMENT ASSASSIN (Sidebar, 3-dot Download, Comments, Popups)
+                            // 3. TARGETED AVATAR CONTAINER REMOVER (NEW ELEMENT FIXED)
+                            "var avatars = document.querySelectorAll('div.w-10.h-10.rounded-full.overflow-hidden'); " +
+                            "for (var aIndex = 0; aIndex < avatars.length; aIndex++) { " +
+                                "avatars[aIndex].style.setProperty('display', 'none', 'important'); " +
+                            "} " +
+
+                            // 4. TEXT-BASED ELEMENT ASSASSIN (Sidebar, 3-dot Download, Comments, Popups)
                             "var killList = ['Contact Us', 'Donate Batch', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
                             "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
                             "for (var k = 0; k < targetElements.length; k++) { " +
@@ -95,11 +101,11 @@ public class MainActivity extends Activity {
                                 "} " +
                             "} " +
 
-                            // 4. MODAL POPUP BACKUP KILLER
+                            // 5. MODAL POPUP BACKUP KILLER
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
                             "for (var n = 0; n < dialogs.length; n++) { dialogs[n].style.setProperty('display', 'none', 'important'); } " +
 
-                        "}, 40); " + // PERFECT 40ms SPEED ZONE
+                        "}, 40); " + // 40ms FLASH SPEED
                 "})()";
 
                 view.loadUrl(jsCode);
@@ -162,7 +168,7 @@ public class MainActivity extends Activity {
 
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
-        if (urlLower.contains("static.pw.live") || url.equals(targetTelegram)) {
+        if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -201,4 +207,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-                    }
+}
