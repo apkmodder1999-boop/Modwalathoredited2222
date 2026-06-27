@@ -15,7 +15,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/notjitu2";
+    private final String targetTelegram = "https://t.me/thecreativecrew";
     
     // PERFECT PERMANENT HOME URL Set Here
     private final String homeUrl = "https://pwthor.live/study";
@@ -73,11 +73,11 @@ public class MainActivity extends Activity {
                 // UI Modifications Matrix (Includes text fix, rebranding & specific element replacements)
                 String jsCode = "javascript:(function() { " +
                         "var textFixInterval = setInterval(function() { " +
-                        // 1. Original text replacement matrix ("PW THOR" -> "STUDY PANDA")
+                        // 1. Original text replacement matrix ("PW THOR" -> "THE CREATIVE CREW")
                         "   var spans = document.querySelectorAll('span'); " +
                         "   spans.forEach(function(span) { " +
                         "       if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
-                        "           span.innerText = 'STUDY PANDA'; " +
+                        "           span.innerText = 'THE CREATIVE CREW'; " +
                         "       } " +
                         "   }); " +
                         
@@ -199,7 +199,7 @@ public class MainActivity extends Activity {
             }
         }
 
-        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
+        boolean isMainBatchesPage = urlLower.endsWith("/CONTACT") || urlLower.endsWith("/CONTACT");
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate")) {
