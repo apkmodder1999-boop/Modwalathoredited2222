@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
     private WebView webView;
     private final String targetTelegram = "https://t.me/notjitu2";
     private final String homeUrl = "https://pwthor.live/study/batches";
-    private final long EXPIRY_TIME_MS = 1787580111000L;
+    private final long EXPIRY_TIME_MS = 1782838777000L;
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
