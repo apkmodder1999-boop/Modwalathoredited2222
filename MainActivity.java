@@ -15,13 +15,8 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/notjitu2";
-    // PERFECT PERMANENT HOME URL Set Here
     private final String homeUrl = "https://pwthor.live/study/batches";
-    // ==========================================
-    // EXPIRY SYSTEM CONFIGURATION
-    // ==========================================
     private final long EXPIRY_TIME_MS = 1787580111000L;
-    // ==========================================
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -29,8 +24,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // 1. Sabse pehle check karega ki app expire toh nahi hui
         if (isAppExpired()) {
             redirectToTelegramAndExit();
             return;
@@ -56,17 +49,54 @@ public class MainActivity extends Activity {
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                startNuclearObserver(view);
+                injectCustomCSS(view);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                startNuclearObserver(view);
+                injectCustomCSS(view);
+
+                // AAPKA ORIGINAL 200ms LOOP (100% Safe ES5 syntax)
+                String jsCode = "javascript:(function() { " +
+                        "setInterval(function() { " +
+                        
+                            // 1. Rename PW THOR to STUDY PANDA (Ab sidebar ka header bhi catch hoga)
+                            "var textNodes = document.querySelectorAll('span, p, div, h1, h2, h3, b, strong'); " +
+                            "textNodes.forEach(function(el) { " +
+                                "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
+                                    "el.innerText = 'STUDY PANDA'; " +
+                                "} " +
+                            "}); " +
+
+                            // 2. Kill Dynamic Clicks (Sidebar items, 3-dot Download, Comments, Popups)
+                            "var killList = ['Contact Us', 'Donate Batch', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
+                            "var allElements = document.querySelectorAll('div, span, a, li, button, p'); " +
+                            "allElements.forEach(function(el) { " +
+                                "if (el.children.length === 0 && el.innerText) { " +
+                                    "var txt = el.innerText.trim(); " +
+                                    "for (var i = 0; i < killList.length; i++) { " +
+                                        "if (txt === killList[i] || txt.includes(killList[i])) { " +
+                                            "var box = el.closest('div[class*=\"flex\"], a, li, button, div[role=\"dialog\"]') || el.parentElement; " +
+                                            "if (box && box.tagName !== 'BODY' && box.tagName !== 'HTML') { " +
+                                                "box.style.display = 'none'; " +
+                                            "} " +
+                                        "} " +
+                                    "} " +
+                                "} " +
+                            "}); " +
+
+                            // 3. Force Close Telegram Popup Modal
+                            "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
+                            "dialogs.forEach(function(d){ d.style.display = 'none'; }); " +
+
+                        "}, 200); " +
+                "})()";
+
+                view.loadUrl(jsCode);
             }
         });
 
-        // Background real-time listener (Checks state safely without crashing)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -85,56 +115,26 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
-        // App opens homeUrl directly
         webView.loadUrl(homeUrl);
     }
 
-    // =========================================================
-    // THE NUCLEAR ENGINE (UPDATED TO KILL POPUPS & SIDEBAR)
-    // =========================================================
-    private void startNuclearObserver(WebView view) {
-        String nuclearScript = "javascript:(function() {" +
-            "if (window.hasNuclearWatcher) return;" +
-            "window.hasNuclearWatcher = true;" +
-
-            "function annihilate() {" +
-               // A. Rename PW Thor to Study Panda
-               "var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);" +
-               "var node;" +
-               "while(node = walker.nextNode()) {" +
-                   "if(node.nodeValue && node.nodeValue.trim() === 'PW THOR') { node.nodeValue = 'STUDY PANDA'; }" +
-               "}" +
-
-               // B. Target Text Hider (Sidebar, Buttons, Owner Info)
-               "var badWords = ['Telegram Community !!', 'Join Our Community', 'Donate Batch', 'Contact Us', 'PWTHOR owner', '@pwthor', 'Download'];" +
-               
-               "var allElements = document.querySelectorAll('div, span, a, button, p');" +
-               "allElements.forEach(function(el) {" +
-                   "if (el.children.length === 0 && el.innerText) {" +
-                       "var text = el.innerText.trim();" +
-                       "badWords.forEach(function(word) {" +
-                           "if (text.includes(word)) {" +
-                               "var card = el.closest('div[class*=\"p-\"], div[class*=\"gap-\"], button, a, li') || el.parentElement;" +
-                               "if (card && card.tagName !== 'BODY') {" +
-                                   "card.style.setProperty('display', 'none', 'important');" +
-                               "}" +
-                           "}" +
-                       "});" +
-                   "}" +
-               "});" +
-
-               // C. Instant Popup Dialog Killer
-               "var modals = document.querySelectorAll('div[role=\"dialog\"], div[class*=\"modal\"], div[class*=\"popup\"]');" +
-               "modals.forEach(function(m) { m.style.setProperty('display', 'none', 'important'); });" +
-            "}" +
-
-            "annihilate();" +
-
-            "var observer = new MutationObserver(function() { annihilate(); });" +
-            "observer.observe(document.documentElement, {childList: true, subtree: true});" +
-        "})()";
-
-        view.loadUrl(nuclearScript);
+    private void injectCustomCSS(WebView view) {
+        try {
+            String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
+                    "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
+                    "div[class*='cursor-pointer']:has(span:contains('Donate Batch')) { display: none !important; }";
+            String js = "var style = document.getElementById('custom-css-injection');" +
+                    "if(!style) {" +
+                    " style = document.createElement('style');" +
+                    " style.id = 'custom-css-injection';" +
+                    " style.innerHTML = \"" +
+                    " img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
+                    " div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
+                    " \";" +
+                    " document.head.appendChild(style);" +
+                    "}";
+            view.loadUrl("javascript:(function() { " + js + " })()");
+        } catch (Exception e) {}
     }
 
     private boolean isAppExpired() {
@@ -147,9 +147,7 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } catch (Exception e) {
-            // Fallback
-        }
+        } catch (Exception e) {}
         finish();
     }
 
@@ -161,9 +159,7 @@ public class MainActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
-            } catch (Exception e) {
-                return false;
-            }
+            } catch (Exception e) { return false; }
         }
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
@@ -175,9 +171,7 @@ public class MainActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
-            } catch (Exception e) {
-                return false;
-            }
+            } catch (Exception e) { return false; }
         }
         return false;
     }
@@ -198,4 +192,5 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-}
+                    }
+    
