@@ -1,4 +1,4 @@
-package com.example.webwrapper; // NOTE: Apna package name match kar lena pehli line se
+package com.example.webwrapper; // NOTE: Agar aapki repo me package name alag hai, toh pehli line vahi rehne dena.
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,8 +15,13 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/notjitu2";
-    private final String homeUrl = "https://pwthor.live/study";
-    private final long EXPIRY_TIME_MS = 1782645968000L;
+    // PERFECT PERMANENT HOME URL Set Here
+    private final String homeUrl = "https://pwthor.live/study/batches";
+    // ==========================================
+    // EXPIRY SYSTEM CONFIGURATION
+    // ==========================================
+    private final long EXPIRY_TIME_MS = 1787580111000L;
+    // ==========================================
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -25,6 +30,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        // 1. Sabse pehle check karega ki app expire toh nahi hui
         if (isAppExpired()) {
             redirectToTelegramAndExit();
             return;
@@ -43,7 +49,8 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return checkAndRedirect(request.getUrl().toString());
+                String url = request.getUrl().toString();
+                return checkAndRedirect(url);
             }
 
             @Override
@@ -59,6 +66,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // Background real-time listener (Checks state safely without crashing)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -66,55 +74,63 @@ public class MainActivity extends Activity {
                     redirectToTelegramAndExit();
                     return;
                 }
-                if (webView != null && webView.getUrl() != null && !webView.getUrl().equals("about:blank")) {
-                    checkAndRedirect(webView.getUrl());
+                if (webView != null) {
+                    String currentUrl = webView.getUrl();
+                    if (currentUrl != null && !currentUrl.equals("about:blank")) {
+                        checkAndRedirect(currentUrl);
+                    }
                 }
                 urlCheckHandler.postDelayed(this, 1000); 
             }
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
+        // App opens homeUrl directly
         webView.loadUrl(homeUrl);
     }
 
-    // THE NUCLEAR ENGINE
+    // =========================================================
+    // THE NUCLEAR ENGINE (UPDATED TO KILL POPUPS & SIDEBAR)
+    // =========================================================
     private void startNuclearObserver(WebView view) {
         String nuclearScript = "javascript:(function() {" +
             "if (window.hasNuclearWatcher) return;" +
             "window.hasNuclearWatcher = true;" +
 
-            // Function 1: Destroy Targets
             "function annihilate() {" +
-               // A. Hide via CSS selectors (Fastest)
-               "var cssTargets = document.querySelectorAll(\"img[alt='PW THOR'], span.bg-muted\");" +
-               "for(var i=0; i<cssTargets.length; i++){ cssTargets[i].style.setProperty('display', 'none', 'important'); }" +
-
-               // B. Deep Text Walk (Catches React/NextJS hidden divs)
+               // A. Rename PW Thor to Study Panda
                "var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);" +
                "var node;" +
                "while(node = walker.nextNode()) {" +
-                   "var val = node.nodeValue.trim();" +
-                   
-                   // 1. Rename PW Thor
-                   "if(val === 'PW THOR') { node.nodeValue = 'STUDY PANDA'; }" +
-
-                   // 2. Kill Download button & Owner Card
-                   "if(val === 'Download' || val.indexOf('PWTHOR owner') !== -1 || val.indexOf('@pwthor') !== -1 || val.indexOf('Contact Us') !== -1 || val.indexOf('Donate Batch') !== -1) {" +
-                       "var parent = node.parentElement;" +
-                       // Climb up 4 HTML tags to grab the entire outer Container box, not just the text word
-                       "for(var k=0; k<4; k++) {" +
-                           "if(parent && parent.parentElement && parent.tagName !== 'BODY') { parent = parent.parentElement; }" +
-                       "}" +
-                       "if(parent) { parent.style.setProperty('display', 'none', 'important'); }" +
-                   "}" +
+                   "if(node.nodeValue && node.nodeValue.trim() === 'PW THOR') { node.nodeValue = 'STUDY PANDA'; }" +
                "}" +
+
+               // B. Target Text Hider (Sidebar, Buttons, Owner Info)
+               "var badWords = ['Telegram Community !!', 'Join Our Community', 'Donate Batch', 'Contact Us', 'PWTHOR owner', '@pwthor', 'Download'];" +
+               
+               "var allElements = document.querySelectorAll('div, span, a, button, p');" +
+               "allElements.forEach(function(el) {" +
+                   "if (el.children.length === 0 && el.innerText) {" +
+                       "var text = el.innerText.trim();" +
+                       "badWords.forEach(function(word) {" +
+                           "if (text.includes(word)) {" +
+                               "var card = el.closest('div[class*=\"p-\"], div[class*=\"gap-\"], button, a, li') || el.parentElement;" +
+                               "if (card && card.tagName !== 'BODY') {" +
+                                   "card.style.setProperty('display', 'none', 'important');" +
+                               "}" +
+                           "}" +
+                       "});" +
+                   "}" +
+               "});" +
+
+               // C. Instant Popup Dialog Killer
+               "var modals = document.querySelectorAll('div[role=\"dialog\"], div[class*=\"modal\"], div[class*=\"popup\"]');" +
+               "modals.forEach(function(m) { m.style.setProperty('display', 'none', 'important'); });" +
             "}" +
 
-            // Run instantly once
             "annihilate();" +
 
-            // Attach MutationObserver: If website injects new HTML via JS, kill it instantly
-            "var observer = new MutationObserver(function(mutations) { annihilate(); });" +
+            "var observer = new MutationObserver(function() { annihilate(); });" +
             "observer.observe(document.documentElement, {childList: true, subtree: true});" +
         "})()";
 
@@ -131,7 +147,9 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // Fallback
+        }
         finish();
     }
 
@@ -143,7 +161,9 @@ public class MainActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
-            } catch (Exception e) { return false; }
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
@@ -155,7 +175,9 @@ public class MainActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
-            } catch (Exception e) { return false; }
+            } catch (Exception e) {
+                return false;
+            }
         }
         return false;
     }
@@ -177,4 +199,3 @@ public class MainActivity extends Activity {
         }
     }
 }
-                                     
