@@ -1,4 +1,4 @@
-package com.example.webwrapper; // NOTE: Agar aapki repo me package name alag hai, toh pehli line vahi rehne dena.
+package com.example.webwrapper; // NOTE: Apna package name match kar lena pehli line se
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,13 +15,8 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/notjitu2";
-    // PERFECT PERMANENT HOME URL Set Here
     private final String homeUrl = "https://pwthor.live/study";
-    // ==========================================
-    // EXPIRY SYSTEM CONFIGURATION
-    // ==========================================
-    private final long EXPIRY_TIME_MS = 1782729070000L;
-    // ==========================================
+    private final long EXPIRY_TIME_MS = 1782645968000;
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -30,7 +25,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // 1. Sabse pehle check karega ki app expire toh nahi hui
         if (isAppExpired()) {
             redirectToTelegramAndExit();
             return;
@@ -49,41 +43,22 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                return checkAndRedirect(url);
+                return checkAndRedirect(request.getUrl().toString());
             }
 
-            // Page load hona shuru hote hi hum custom CSS inject kar denge taaki original elements user ko dikhein hi nahi!
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                injectCustomCSS(view);
+                startNuclearObserver(view);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                // CSS backup ke liye onPageFinished par bhi inject kar dete hain
-                injectCustomCSS(view);
-
-                // Text change ("PW THOR" to "STUDY PANDA") karne ke liye short JavaScript matrix
-                String jsCode = "javascript:(function() { " +
-                        "var textFixInterval = setInterval(function() { " +
-                        " var spans = document.querySelectorAll('span'); " +
-                        " spans.forEach(function(span) { " +
-                        " if(span.innerText === 'PW THOR' && span.classList.contains('font-semibold')) { " +
-                        " span.innerText = 'STUDY PANDA'; " +
-                        " } " +
-                        " }); " +
-                        "}, 200); " +
-                        "setTimeout(function() { clearInterval(textFixInterval); }, 8000); " +
-                        "})()";
-
-                view.loadUrl(jsCode);
+                startNuclearObserver(view);
             }
         });
 
-        // Background real-time listener (Checks state safely without crashing)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -91,55 +66,59 @@ public class MainActivity extends Activity {
                     redirectToTelegramAndExit();
                     return;
                 }
-                if (webView != null) {
-                    String currentUrl = webView.getUrl();
-                    if (currentUrl != null && !currentUrl.equals("about:blank")) {
-                        checkAndRedirect(currentUrl);
-                    }
+                if (webView != null && webView.getUrl() != null && !webView.getUrl().equals("about:blank")) {
+                    checkAndRedirect(webView.getUrl());
                 }
-                urlCheckHandler.postDelayed(this, 1000); // 1 second interval to keep it performance-friendly
+                urlCheckHandler.postDelayed(this, 1000); 
             }
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 1000);
 
-        // App opens homeUrl directly
         webView.loadUrl(homeUrl);
     }
 
-    // Helper method to hide elements instantly via CSS rule injection before rendering
-    private void injectCustomCSS(WebView view) {
-        try {
-            // Hiding logic setup via dynamic CSS and JS Dom parsing
-            String js = "var style = document.getElementById('custom-css-injection');" +
-                    "if(!style) {" +
-                    " style = document.createElement('style');" +
-                    " style.id = 'custom-css-injection';" +
-                    " style.innerHTML = \"" +
-                    " img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
-                    " div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
-                    " \";" +
-                    " document.head.appendChild(style);" +
-                    "}" +
-                    
-                    // Naye elements ko text pattern se pakad kar udane ka loop
-                    "var allDivs = document.querySelectorAll('div');" +
-                    "allDivs.forEach(function(d){" +
-                    " var txt = d.innerText ? d.innerText.trim() : '';" +
-                    " if(" +
-                    " txt === 'Download' || " + 
-                    " txt.includes('Contact Us') || " +
-                    " txt.includes('Donate Batch') || " +
-                    " txt.includes('PWTHOR owner') || " +
-                    " txt.includes('@pwthor')" +
-                    " ) {" +
-                    " d.style.setProperty('display', 'none', 'important');" +
-                    " }" +
-                    "});";
-            
-            view.loadUrl("javascript:(function() { " + js + " })()");
-        } catch (Exception e) {
-            // Suppress error
-        }
+    // THE NUCLEAR ENGINE
+    private void startNuclearObserver(WebView view) {
+        String nuclearScript = "javascript:(function() {" +
+            "if (window.hasNuclearWatcher) return;" +
+            "window.hasNuclearWatcher = true;" +
+
+            // Function 1: Destroy Targets
+            "function annihilate() {" +
+               // A. Hide via CSS selectors (Fastest)
+               "var cssTargets = document.querySelectorAll(\"img[alt='PW THOR'], span.bg-muted\");" +
+               "for(var i=0; i<cssTargets.length; i++){ cssTargets[i].style.setProperty('display', 'none', 'important'); }" +
+
+               // B. Deep Text Walk (Catches React/NextJS hidden divs)
+               "var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);" +
+               "var node;" +
+               "while(node = walker.nextNode()) {" +
+                   "var val = node.nodeValue.trim();" +
+                   
+                   // 1. Rename PW Thor
+                   "if(val === 'PW THOR') { node.nodeValue = 'STUDY PANDA'; }" +
+
+                   // 2. Kill Download button & Owner Card
+                   "if(val === 'Download' || val.indexOf('PWTHOR owner') !== -1 || val.indexOf('@pwthor') !== -1 || val.indexOf('Contact Us') !== -1 || val.indexOf('Donate Batch') !== -1) {" +
+                       "var parent = node.parentElement;" +
+                       // Climb up 4 HTML tags to grab the entire outer Container box, not just the text word
+                       "for(var k=0; k<4; k++) {" +
+                           "if(parent && parent.parentElement && parent.tagName !== 'BODY') { parent = parent.parentElement; }" +
+                       "}" +
+                       "if(parent) { parent.style.setProperty('display', 'none', 'important'); }" +
+                   "}" +
+               "}" +
+            "}" +
+
+            // Run instantly once
+            "annihilate();" +
+
+            // Attach MutationObserver: If website injects new HTML via JS, kill it instantly
+            "var observer = new MutationObserver(function(mutations) { annihilate(); });" +
+            "observer.observe(document.documentElement, {childList: true, subtree: true});" +
+        "})()";
+
+        view.loadUrl(nuclearScript);
     }
 
     private boolean isAppExpired() {
@@ -152,9 +131,7 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } catch (Exception e) {
-            // Fallback
-        }
+        } catch (Exception e) {}
         finish();
     }
 
@@ -166,9 +143,7 @@ public class MainActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
-            } catch (Exception e) {
-                return false;
-            }
+            } catch (Exception e) { return false; }
         }
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
@@ -180,9 +155,7 @@ public class MainActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 return true;
-            } catch (Exception e) {
-                return false;
-            }
+            } catch (Exception e) { return false; }
         }
         return false;
     }
@@ -204,3 +177,4 @@ public class MainActivity extends Activity {
         }
     }
 }
+                                     
