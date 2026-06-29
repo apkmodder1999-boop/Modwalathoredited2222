@@ -15,8 +15,8 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/notjitu2";
-    private final String homeUrl = "https://pwthor.live/study/batches";
-    private final long EXPIRY_TIME_MS = 1782838777000L;
+    private final String homeUrl = "https://pwthor.live/study/batches/69d8916116a832cea75df23c";
+    private final long EXPIRY_TIME_MS = 1814268335000L;
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
                             "for (var i = 0; i < textNodes.length; i++) { " +
                                 "var el = textNodes[i]; " +
                                 "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
-                                    "el.innerText = 'STUDY PANDA'; " +
+                                    "el.innerText = 'SANKALP 2028'; " +
                                 "} " +
                             "} " +
 
@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
                             "} " +
 
                             // 4. TEXT-BASED ELEMENT ASSASSIN (Sidebar, 3-dot Download, Comments, Popups)
-                            "var killList = ['Contact Us', 'Donate Batch', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
+                            "var killList = ['Contact Us', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
                             "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
                             "for (var k = 0; k < targetElements.length; k++) { " +
                                 "var element = targetElements[k]; " +
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
                             "for (var n = 0; n < dialogs.length; n++) { dialogs[n].style.setProperty('display', 'none', 'important'); } " +
 
-                        "}, 40); " + // 40ms FLASH SPEED
+                        "}, 100); " + // 100ms FLASH SPEED
                 "})()";
 
                 view.loadUrl(jsCode);
@@ -178,7 +178,7 @@ public class MainActivity extends Activity {
         }
 
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
-                urlLower.contains("/contact") || urlLower.contains("/study/donate")) {
+                urlLower.contains("/contact") || urlLower.contains("/end")) {
             try {
                 webView.stopLoading();
                 webView.loadUrl(homeUrl);
