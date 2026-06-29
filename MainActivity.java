@@ -1,4 +1,4 @@
-package com.example.webwrapper; // NOTE: Agar aapki repo me package name alag hai, toh pehli line vahi rehne dena.
+package com.example.webwrapper; 
 
 import android.app.Activity;
 import android.content.Intent;
@@ -49,13 +49,18 @@ public class MainActivity extends Activity {
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                injectCustomCSS(view);
+                injectCustomCSS(view, url);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                injectCustomCSS(view);
+                injectCustomCSS(view, url);
+
+                // Skip JS manipulations entirely if on the donate section
+                if (url != null && url.toLowerCase().contains("/study/donate")) {
+                    return;
+                }
 
                 // ULTRA FLASH MODE - 40ms LOOP WITH HIGH-PERFORMANCE FILTERS
                 String jsCode = "javascript:(function() { " +
@@ -133,7 +138,12 @@ public class MainActivity extends Activity {
         webView.loadUrl(homeUrl);
     }
 
-    private void injectCustomCSS(WebView view) {
+    private void injectCustomCSS(WebView view, String url) {
+        // Disable injection if we are on the donate section
+        if (url != null && url.toLowerCase().contains("/study/donate")) {
+            return;
+        }
+        
         try {
             String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
                     "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
@@ -168,7 +178,7 @@ public class MainActivity extends Activity {
 
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
-        if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
+        if (urlLower.contains("static.pw.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -177,8 +187,14 @@ public class MainActivity extends Activity {
             } catch (Exception e) { return false; }
         }
 
-    
-        boolean endsWithBatches = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches");
+        // Strict blocking if url ends exactly with /study/batches or /study/batches/
+        if (urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/")) {
+            try {
+                webView.stopLoading();
+                webView.loadUrl(homeUrl);
+                return true; 
+            } catch (Exception e) { return false; }
+        }
         
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
                 urlLower.contains("/contact") || urlLower.contains("/end")) {
