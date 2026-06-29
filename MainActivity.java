@@ -177,6 +177,7 @@ public class MainActivity extends Activity {
             } catch (Exception e) { return false; }
         }
 
+    
         boolean endsWithBatches = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches");
         
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pwthor1") ||
