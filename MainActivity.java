@@ -231,5 +231,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-            }
-                    
+}
