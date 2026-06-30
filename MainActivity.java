@@ -62,14 +62,15 @@ public class MainActivity extends Activity {
                     return;
                 }
 
-                // ULTRA FLASH MODE - 40ms LOOP WITH HIGH-PERFORMANCE FILTERS
+                // ULTRA FLASH MODE - 100ms LOOP WITH HIGH-PERFORMANCE FILTERS
                 String jsCode = "javascript:(function() { " +
                         "setInterval(function() { " +
                         
-                            // 1. FAST TEXT REPLACEMENT (PW THOR -> STUDY PANDA)
+                            // 1. FAST TEXT REPLACEMENT (PW THOR -> PREMIUM PW)
                             "var textNodes = document.querySelectorAll('span, p, div, h1, h2, h3, b, strong'); " +
                             "for (var i = 0; i < textNodes.length; i++) { " +
                                 "var el = textNodes[i]; " +
+                                "if(el.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
                                 "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
                                     "el.innerText = 'PREMIUM PW'; " +
                                 "} " +
@@ -93,6 +94,7 @@ public class MainActivity extends Activity {
                             "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
                             "for (var k = 0; k < targetElements.length; k++) { " +
                                 "var element = targetElements[k]; " +
+                                "if(element.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
                                 "if (element.children.length === 0 && element.innerText) { " +
                                     "var txt = element.innerText.trim(); " +
                                     "for (var m = 0; m < killList.length; m++) { " +
@@ -106,11 +108,14 @@ public class MainActivity extends Activity {
                                 "} " +
                             "} " +
 
-                            // 5. MODAL POPUP BACKUP KILLER
+                            // 5. MODAL POPUP BACKUP KILLER (Excludes video settings overlays)
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
-                            "for (var n = 0; n < dialogs.length; n++) { dialogs[n].style.setProperty('display', 'none', 'important'); } " +
+                            "for (var n = 0; n < dialogs.length; n++) { " +
+                                "if(dialogs[n].closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
+                                "dialogs[n].style.setProperty('display', 'none', 'important'); " +
+                            "} " +
 
-                        "}, 500); " + // 500ms FLASH SPEED
+                        "}, 100); " + // 100ms FLASH SPEED
                 "})()";
 
                 view.loadUrl(jsCode);
@@ -226,4 +231,5 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-}
+            }
+                    
