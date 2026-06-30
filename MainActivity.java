@@ -94,12 +94,17 @@ public class MainActivity extends Activity {
                             "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
                             "for (var k = 0; k < targetElements.length; k++) { " +
                                 "var element = targetElements[k]; " +
-                                "if(element.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
+                                
+                                // NEW COMPASSIONATE BYPASS RULE: If it's a video element but contains 'Download', let it through to be hidden!
+                                "if(element.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) { " +
+                                    "if(!element.innerText || !element.innerText.includes('Download')) { continue; } " +
+                                "} " +
+
                                 "if (element.children.length === 0 && element.innerText) { " +
                                     "var txt = element.innerText.trim(); " +
                                     "for (var m = 0; m < killList.length; m++) { " +
                                         "if (txt === killList[m] || txt.includes(killList[m])) { " +
-                                            "var box = element.closest('div[class*=\"flex\"], a, li, button, div[role=\"dialog\"]') || element.parentElement; " +
+                                            "var box = element.closest('div[class*=\"flex\"], div[class*=\"item\"], a, li, button, div[role=\"dialog\"]') || element.parentElement; " +
                                             "if (box && box.tagName !== 'BODY' && box.tagName !== 'HTML') { " +
                                                 "box.style.setProperty('display', 'none', 'important'); " +
                                             "} " +
@@ -231,4 +236,5 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-}
+                    }
+                
