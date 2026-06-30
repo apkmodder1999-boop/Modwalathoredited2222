@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
                             "for (var n = 0; n < dialogs.length; n++) { dialogs[n].style.setProperty('display', 'none', 'important'); } " +
 
-                        "}, 100); " + // 100ms FLASH SPEED
+                        "}, 500); " + // 500ms FLASH SPEED
                 "})()";
 
                 view.loadUrl(jsCode);
