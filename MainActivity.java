@@ -15,8 +15,8 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/notjitu2";
-    private final String homeUrl = "https://pwthor.live/study/batches/69d8916116a832cea75df23c";
-    private final long EXPIRY_TIME_MS = 1814268335000L;
+    private final String homeUrl = "https://pwthor.live/study/batches/698ad3519549b300a5e1cc6a";
+    private final long EXPIRY_TIME_MS = 1785391222000L;
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
                             "for (var i = 0; i < textNodes.length; i++) { " +
                                 "var el = textNodes[i]; " +
                                 "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
-                                    "el.innerText = 'SANKALP 2028'; " +
+                                    "el.innerText = 'PREMIUM PW'; " +
                                 "} " +
                             "} " +
 
