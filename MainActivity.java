@@ -15,8 +15,8 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/pw0mod";
-    private final String homeUrl = "https://pwthor.live/study/batches/6a21129fcaaffa8a7e33d7fd";
-    private final long EXPIRY_TIME_MS = 1809167616000L;
+    private final String homeUrl = "https://pwthor.live/study/batches/698ec4d979fb4aa23c1fd2c3";
+    private final long EXPIRY_TIME_MS = 1785675384000L;
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -57,7 +57,6 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 injectCustomCSS(view, url);
 
-                // Skip JS manipulations entirely if on the donate section
                 if (url != null && url.toLowerCase().contains("/study/donate")) {
                     return;
                 }
@@ -70,41 +69,40 @@ public class MainActivity extends Activity {
                             "var textNodes = document.querySelectorAll('span, p, div, h1, h2, h3, b, strong'); " +
                             "for (var i = 0; i < textNodes.length; i++) { " +
                                 "var el = textNodes[i]; " +
-                                "if(el.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
+                                "if(el.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + 
                                 "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
                                     "el.innerText = 'PREMIUM PW'; " +
                                 "} " +
                             "} " +
 
-                            // 2. NEW BLUE LOGO IMAGE REMOVER (Instant kill via src url)
+                            // 2. NEW BLUE LOGO IMAGE REMOVER
                             "var badLogos = document.querySelectorAll(\"img[src*='pwthor.site/logo.png']\"); " +
                             "for (var j = 0; j < badLogos.length; j++) { " +
                                 "var container = badLogos[j].closest('div.rounded-full') || badLogos[j].parentElement; " +
                                 "if(container) { container.style.setProperty('display', 'none', 'important'); } " +
                             "} " +
 
-                            // 3. TARGETED AVATAR CONTAINER REMOVER (NEW ELEMENT FIXED)
+                            // 3. TARGETED AVATAR CONTAINER REMOVER
                             "var avatars = document.querySelectorAll('div.w-10.h-10.rounded-full.overflow-hidden'); " +
                             "for (var aIndex = 0; aIndex < avatars.length; aIndex++) { " +
                                 "avatars[aIndex].style.setProperty('display', 'none', 'important'); " +
                             "} " +
 
-                            // 4. TEXT-BASED ELEMENT ASSASSIN (Sidebar, 3-dot Download, Comments, Popups)
-                            "var killList = ['Contact Us', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
+                            // 4. TEXT-BASED ELEMENT ASSASSIN (Updated to catch the new legal/security notice text)
+                            "var killList = ['Contact Us', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!', 'Secured & Encrypted', 'By continuing, you agree to']; " +
                             "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
                             "for (var k = 0; k < targetElements.length; k++) { " +
                                 "var element = targetElements[k]; " +
                                 
-                                // NEW COMPASSIONATE BYPASS RULE: If it's a video element but contains 'Download', let it through to be hidden!
                                 "if(element.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) { " +
                                     "if(!element.innerText || !element.innerText.includes('Download')) { continue; } " +
                                 "} " +
 
-                                "if (element.children.length === 0 && element.innerText) { " +
+                                "if (element.innerText) { " +
                                     "var txt = element.innerText.trim(); " +
                                     "for (var m = 0; m < killList.length; m++) { " +
-                                        "if (txt === killList[m] || txt.includes(killList[m])) { " +
-                                            "var box = element.closest('div[class*=\"flex\"], div[class*=\"item\"], a, li, button, div[role=\"dialog\"]') || element.parentElement; " +
+                                        "if (txt.includes(killList[m])) { " +
+                                            "var box = element.closest('div[class*=\"flex\"], div[class*=\"item\"], a, li, button, p, div[role=\"dialog\"]') || element.parentElement; " +
                                             "if (box && box.tagName !== 'BODY' && box.tagName !== 'HTML') { " +
                                                 "box.style.setProperty('display', 'none', 'important'); " +
                                             "} " +
@@ -113,14 +111,14 @@ public class MainActivity extends Activity {
                                 "} " +
                             "} " +
 
-                            // 5. MODAL POPUP BACKUP KILLER (Excludes video settings overlays)
+                            // 5. MODAL POPUP BACKUP KILLER
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
                             "for (var n = 0; n < dialogs.length; n++) { " +
-                                "if(dialogs[n].closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
+                                "if(dialogs[n].closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + 
                                 "dialogs[n].style.setProperty('display', 'none', 'important'); " +
                             "} " +
 
-                        "}, 100); " + // 100ms FLASH SPEED
+                        "}, 100); " + 
                 "})()";
 
                 view.loadUrl(jsCode);
@@ -149,15 +147,13 @@ public class MainActivity extends Activity {
     }
 
     private void injectCustomCSS(WebView view, String url) {
-        // Disable injection if we are on the donate section
         if (url != null && url.toLowerCase().contains("/study/donate")) {
             return;
         }
         
         try {
-            String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
-                    "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
-                    "div[class*='cursor-pointer']:has(span:contains('Donate Batch')) { display: none !important; }";
+            // Updated style tags to immediately target the class layout of the encryption banner
+            // and find elements containing the Privacy policy strings to hide them right at rendering stage
             String js = "var style = document.getElementById('custom-css-injection');" +
                     "if(!style) {" +
                     " style = document.createElement('style');" +
@@ -165,6 +161,8 @@ public class MainActivity extends Activity {
                     " style.innerHTML = \"" +
                     " img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
                     " div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
+                    " p.text-xs.text-center.text-gray-500.font-medium { display: none !important; }" + 
+                    " p:has(button:contains('Privacy Policy')) { display: none !important; }" +
                     " \";" +
                     " document.head.appendChild(style);" +
                     "}";
@@ -197,7 +195,6 @@ public class MainActivity extends Activity {
             } catch (Exception e) { return false; }
         }
 
-        // Strict blocking if url ends exactly with /study/batches or /study/batches/
         if (urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/")) {
             try {
                 webView.stopLoading();
@@ -236,5 +233,5 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-                    }
+            }
                 
