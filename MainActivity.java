@@ -14,9 +14,9 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/pw0mod";
-    private final String homeUrl = "https://pwthor.live/study/batches/698de475543bcb25f95449b8";
-    private final long EXPIRY_TIME_MS = 1809158006000L;
+    private final String targetTelegram = "https://t.me/Mtaiirus_official";
+    private final String homeUrl = "https://pwthor.live/study/batches/67790151518b938bc630052d";
+    private final long EXPIRY_TIME_MS = 1997326085000L;
 
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -70,9 +70,9 @@ public class MainActivity extends Activity {
                             "var textNodes = document.querySelectorAll('span, p, div, h1, h2, h3, b, strong'); " +
                             "for (var i = 0; i < textNodes.length; i++) { " +
                                 "var el = textNodes[i]; " +
-                                "if(el.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
+                                "if(el.closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + 
                                 "if(el.children.length === 0 && el.innerText && el.innerText.trim() === 'PW THOR') { " +
-                                    "el.innerText = 'PREMIUM PW'; " +
+                                    "el.innerText = 'PW BY NAITIK'; " +
                                 "} " +
                             "} " +
 
@@ -83,14 +83,14 @@ public class MainActivity extends Activity {
                                 "if(container) { container.style.setProperty('display', 'none', 'important'); } " +
                             "} " +
 
-                            // 3. TARGETED AVATAR CONTAINER REMOVER (NEW ELEMENT FIXED)
-                            "var avatars = document.querySelectorAll('div.w-10.h-10.rounded-full.overflow-hidden'); " +
+                            // 3. TARGETED AVATAR CONTAINER REMOVER (Expanded for the new span-based avatar)
+                            "var avatars = document.querySelectorAll('div.w-10.h-10.rounded-full.overflow-hidden, span.h-10.w-10.rounded-full'); " +
                             "for (var aIndex = 0; aIndex < avatars.length; aIndex++) { " +
                                 "avatars[aIndex].style.setProperty('display', 'none', 'important'); " +
                             "} " +
 
                             // 4. TEXT-BASED ELEMENT ASSASSIN (Sidebar, 3-dot Download, Comments, Popups)
-                            "var killList = ['Contact Us', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!']; " +
+                            "var killList = ['Contact Us', 'Download', 'PWTHOR owner', '@pwthor', 'Join Our Community', 'Telegram Community !!', 'Join Telegram Channel']; " +
                             "var targetElements = document.querySelectorAll('div, span, a, li, button, p'); " +
                             "for (var k = 0; k < targetElements.length; k++) { " +
                                 "var element = targetElements[k]; " +
@@ -116,11 +116,43 @@ public class MainActivity extends Activity {
                             // 5. MODAL POPUP BACKUP KILLER (Excludes video settings overlays)
                             "var dialogs = document.querySelectorAll('div[role=\"dialog\"]'); " +
                             "for (var n = 0; n < dialogs.length; n++) { " +
-                                "if(dialogs[n].closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " + // SKIP VIDEO PLAYER
+                                "if(dialogs[n].closest('.video-js, .plyr, video, [class*=\"player\"], [class*=\"vjs\"]')) continue; " +
                                 "dialogs[n].style.setProperty('display', 'none', 'important'); " +
                             "} " +
 
-                        "}, 100); " + // 100ms FLASH SPEED
+                            // 6. HIDE SPECIFIC PARAGRAPHS (Privacy Policy & Secured Banner)
+                            "var pTags = document.querySelectorAll('p'); " +
+                            "for (var p = 0; p < pTags.length; p++) { " +
+                                "if (pTags[p].innerText) { " +
+                                    "var pText = pTags[p].innerText; " +
+                                    "if (pText.includes('By continuing, you agree to the') || pText.includes('Secured & Encrypted')) { " +
+                                        "pTags[p].style.setProperty('display', 'none', 'important'); " +
+                                    "} " +
+                                "} " +
+                            "} " +
+
+                            // 7. NEW: TARGET COMMUNITY BANNER BY H2 TEXT
+                            "var h2Tags = document.querySelectorAll('h2'); " +
+                            "for (var h = 0; h < h2Tags.length; h++) { " +
+                                "if (h2Tags[h].innerText && h2Tags[h].innerText.includes('Join Our Community')) { " +
+                                    "var banner = h2Tags[h].closest('div.bg-background.border') || h2Tags[h].parentElement.parentElement; " +
+                                    "if (banner) banner.style.setProperty('display', 'none', 'important'); " +
+                                "} " +
+                            "} " +
+
+                            // 8. NEW: TARGET TOP NAV / XP / USER GREETING BY SPAN TEXT
+                            "var spanTags = document.querySelectorAll('span'); " +
+                            "for (var s = 0; s < spanTags.length; s++) { " +
+                                "if (spanTags[s].innerText) { " +
+                                    "var sText = spanTags[s].innerText; " +
+                                    "if (sText.includes('Hi, PWThor User') || sText.includes('XP')) { " +
+                                        "var navBar = spanTags[s].closest('div.flex.items-center.gap-4') || spanTags[s].parentElement; " +
+                                        "if (navBar) navBar.style.setProperty('display', 'none', 'important'); " +
+                                    "} " +
+                                "} " +
+                            "} " +
+
+                        "}, 100); " + 
                 "})()";
 
                 view.loadUrl(jsCode);
@@ -155,14 +187,12 @@ public class MainActivity extends Activity {
         }
         
         try {
-            String css = "img[alt='PW THOR'], .bg-muted { display: none !important; }" +
-                    "div[class*='cursor-pointer']:has(span:contains('Contact Us')), " +
-                    "div[class*='cursor-pointer']:has(span:contains('Donate Batch')) { display: none !important; }";
             String js = "var style = document.getElementById('custom-css-injection');" +
                     "if(!style) {" +
                     " style = document.createElement('style');" +
                     " style.id = 'custom-css-injection';" +
                     " style.innerHTML = \"" +
+                    " body { background-color: #009eec !important; } " +
                     " img[alt='PW THOR'], span.bg-muted { display: none !important; } " +
                     " div.flex.items-center:has(svg.lucide-contact), div.flex.items-center:has(svg.lucide-heart) { display: none !important; }" +
                     " \";" +
@@ -198,7 +228,7 @@ public class MainActivity extends Activity {
         }
 
         // Strict blocking if url ends exactly with /study/batches or /study/batches/
-        if (urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/")) {
+        if (urlLower.endsWith("/love") || urlLower.endsWith("/love/")) {
             try {
                 webView.stopLoading();
                 webView.loadUrl(homeUrl);
@@ -236,5 +266,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-                    }
-                
+}
