@@ -14,7 +14,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/Mtaiirus_official";
+    private final String targetTelegram = "https://t.me/learn_topper";
     private final String homeUrl = "https://pwthor.live/study/batches/67790151518b938bc630052d";
     private final long EXPIRY_TIME_MS = 1997326085000L;
 
